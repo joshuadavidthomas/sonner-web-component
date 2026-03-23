@@ -18,6 +18,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.1.0]
+
 ### Added
 
 - `<sonner-toaster>` web component with Shadow DOM encapsulation
@@ -39,4 +41,5 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Josh Thomas <josh@joshthomas.dev> (maintainer)
 
-[unreleased]: https://github.com/joshuadavidthomas/sonner-web-component/commits/main/
+[unreleased]: https://github.com/joshuadavidthomas/sonner-web-component/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/joshuadavidthomas/sonner-web-component/releases/tag/v0.1.0
