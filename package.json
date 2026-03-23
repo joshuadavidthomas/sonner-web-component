@@ -21,22 +21,27 @@
   "files": [
     "dist"
   ],
+  "homepage": "https://github.com/joshuadavidthomas/sonner-web-component",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "default": "./dist/index.js"
     },
     "./bridges/alpine": {
+      "types": "./dist/bridges/alpine.d.ts",
       "import": "./dist/bridges/alpine.js",
-      "types": "./dist/bridges/alpine.d.ts"
+      "default": "./dist/bridges/alpine.js"
     },
     "./bridges/fetch": {
+      "types": "./dist/bridges/fetch.d.ts",
       "import": "./dist/bridges/fetch.js",
-      "types": "./dist/bridges/fetch.d.ts"
+      "default": "./dist/bridges/fetch.js"
     },
     "./bridges/htmx": {
+      "types": "./dist/bridges/htmx.d.ts",
       "import": "./dist/bridges/htmx.js",
-      "types": "./dist/bridges/htmx.d.ts"
+      "default": "./dist/bridges/htmx.js"
     }
   },
   "sideEffects": true,
