@@ -15,7 +15,7 @@
 
 declare global {
   interface Window {
-    toast: ToastFunction;
+    toast?: ToastFunction;
   }
 }
 
@@ -36,6 +36,19 @@ export interface ToastAction {
   onClick: (e: MouseEvent) => void;
 }
 
+export interface Toast {
+  id: number;
+  type: ToastType;
+  title: string;
+  description: string;
+  html: string;
+  duration: number;
+  dismissible: boolean;
+  promise: boolean | null;
+  action: ToastAction | null;
+  cancel: ToastAction | null;
+}
+
 export interface ToastOptions {
   id?: number;
   description?: string;
@@ -48,8 +61,8 @@ export interface ToastOptions {
   action?: ToastAction;
   cancel?: ToastAction;
   invert?: boolean;
-  onDismiss?: (toast: ToastState) => void;
-  onAutoClose?: (toast: ToastState) => void;
+  onDismiss?: (toast: Toast) => void;
+  onAutoClose?: (toast: Toast) => void;
   title?: string;
   message?: string;
 }
@@ -83,7 +96,7 @@ interface ToasterConfig {
   burstLinger: number;
 }
 
-export interface ToastState {
+interface ToastState {
   id: number;
   type: ToastType;
   title: string;
@@ -99,8 +112,8 @@ export interface ToastState {
   offsetBeforeRemove: number;
   initialHeight: number;
   promise: boolean | null;
-  onDismiss: ((toast: ToastState) => void) | null;
-  onAutoClose: ((toast: ToastState) => void) | null;
+  onDismiss: ((toast: Toast) => void) | null;
+  onAutoClose: ((toast: Toast) => void) | null;
   action: ToastAction | null;
   cancel: ToastAction | null;
 }
@@ -236,6 +249,21 @@ function escapeHtml(str: string): string {
   const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
+}
+
+function toPublicToast(t: ToastState): Toast {
+  return {
+    id: t.id,
+    type: t.type,
+    title: t.title,
+    description: t.description,
+    html: t.html,
+    duration: t.duration,
+    dismissible: t.dismissible,
+    promise: t.promise,
+    action: t.action,
+    cancel: t.cancel,
+  };
 }
 
 // loaded into Shadow DOM via `adoptedStyleSheets`
@@ -1194,8 +1222,8 @@ class SonnerToaster extends HTMLElement {
     // The attributeChangedCallback handles the rest
   }
 
-  getToasts(): ToastState[] {
-    return this.#toasts.slice();
+  getToasts(): Toast[] {
+    return this.#toasts.map(toPublicToast);
   }
 
   add(level: ToastType, message: string | ToastOptions, options?: ToastOptions): number {
@@ -1211,12 +1239,12 @@ class SonnerToaster extends HTMLElement {
     if (id !== undefined && id !== null) {
       const t = this.#findToast(id);
       if (t) {
-        t.onDismiss?.(t);
+        t.onDismiss?.(toPublicToast(t));
         this.#deleteToast(id);
       }
     } else {
       for (const t of this.#toasts.slice()) {
-        t.onDismiss?.(t);
+        t.onDismiss?.(toPublicToast(t));
         this.#deleteToast(t.id);
       }
     }
@@ -1666,7 +1694,7 @@ class SonnerToaster extends HTMLElement {
       el.querySelector("[data-slot='close']")?.addEventListener("click", () => {
         if (dismissible) {
           this.#deleteToast(id);
-          t.onDismiss?.(t);
+          t.onDismiss?.(toPublicToast(t));
         }
       });
     }
@@ -1890,7 +1918,7 @@ class SonnerToaster extends HTMLElement {
               : "up";
         el.setAttribute("data-swipe", "committed");
         el.setAttribute("data-swipe-direction", swipe.outDirection);
-        t.onDismiss?.(t);
+        t.onDismiss?.(toPublicToast(t));
         this.#deleteToast(t.id);
         return;
       }
@@ -2094,7 +2122,7 @@ class SonnerToaster extends HTMLElement {
     if (t.timeout) clearTimeout(t.timeout);
     t.closeTimerStart = Date.now();
     t.timeout = setTimeout(() => {
-      t.onAutoClose?.(t);
+      t.onAutoClose?.(toPublicToast(t));
       this.#deleteToast(t.id);
     }, t.remainingTime);
   }
@@ -2130,6 +2158,7 @@ function getDefault(): SonnerToaster {
 
 interface ToastFunction {
   (msg: string, data?: ToastOptions): number;
+  (data: ToastOptions): number;
   message: (msg: string, data?: ToastOptions) => number;
   success: (msg: string, data?: ToastOptions) => number;
   info: (msg: string, data?: ToastOptions) => number;
@@ -2141,10 +2170,10 @@ interface ToastFunction {
   configure: (opts: ConfigureOptions) => void;
   reset: () => void;
   destroy: () => void;
-  getToasts: () => ToastState[];
+  getToasts: () => Toast[];
 }
 
-function toast(msg: string, data?: ToastOptions): number {
+function toast(msg: string | ToastOptions, data?: ToastOptions): number {
   return getDefault().add("", msg, data);
 }
 toast.message = (msg: string, data?: ToastOptions): number => getDefault().add("", msg, data);
@@ -2161,7 +2190,7 @@ toast.destroy = (): void => {
   const el = SonnerToaster.instance;
   if (el?.parentNode) el.parentNode.removeChild(el);
 };
-toast.getToasts = (): ToastState[] => getDefault().getToasts();
+toast.getToasts = (): Toast[] => getDefault().getToasts();
 
 export { toast, LEVELS };
 export default toast;
