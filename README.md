@@ -214,6 +214,9 @@ toast.getToasts()
 | `description` | `string` | `-` | Secondary text below the title |
 | `duration` | `number` | `4000` | Auto-dismiss time in ms (`Infinity` to persist) |
 | `dismissible` | `boolean` | `true` | Whether the toast can be swiped/dismissed |
+| `richColors` | `boolean` | toaster default | Colored backgrounds based on toast type |
+| `closeButton` | `boolean` | toaster default | Show close button on this toast |
+| `invert` | `boolean` | toaster default | Invert default colors for this toast |
 | `position` | `string` | `bottom-right` | Override position for this toast |
 | `id` | `number` | `-` | Reuse an ID to update an existing toast |
 | `html` | `string` | `-` | Raw HTML content (trusted content only) |
@@ -228,7 +231,7 @@ Bridges connect sonner-web-component to other libraries. Each bridge is a side-e
 
 #### htmx
 
-The htmx bridge listens for `toast` events on `document.body`, which is how htmx dispatches events from the [`HX-Trigger`](https://htmx.org/headers/hx-trigger/) response header. Set the header on any htmx response and toasts appear automatically.
+The htmx bridge listens for `toast` events on `document`, which is how htmx dispatches events from the [`HX-Trigger`](https://htmx.org/headers/hx-trigger/) response header (they bubble up from `document.body`). Set the header on any htmx response and toasts appear automatically.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.x.x/dist/htmx.min.js"></script>
