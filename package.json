@@ -1,0 +1,52 @@
+{
+  "name": "sonner-web-component",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "An opinionated toast web component, a port of @emilkowalski's Sonner.",
+  "author": "Josh Thomas <josh@joshthomas.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joshuadavidthomas/sonner-web-component.git"
+  },
+  "keywords": [
+    "toast",
+    "notifications",
+    "web-component",
+    "custom-element",
+    "sonner"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./bridges/alpine": {
+      "import": "./dist/bridges/alpine.js",
+      "types": "./dist/bridges/alpine.d.ts"
+    },
+    "./bridges/fetch": {
+      "import": "./dist/bridges/fetch.js",
+      "types": "./dist/bridges/fetch.d.ts"
+    },
+    "./bridges/htmx": {
+      "import": "./dist/bridges/htmx.js",
+      "types": "./dist/bridges/htmx.d.ts"
+    }
+  },
+  "sideEffects": true,
+  "scripts": {
+    "build": "rm -rf dist && bun build src/index.ts src/bridges/alpine.ts src/bridges/fetch.ts src/bridges/htmx.ts --outdir dist --sourcemap=linked --splitting && tsc --emitDeclarationOnly",
+    "dev": "bun build src/index.ts src/bridges/alpine.ts src/bridges/fetch.ts src/bridges/htmx.ts --outdir dist --sourcemap=linked --splitting --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
