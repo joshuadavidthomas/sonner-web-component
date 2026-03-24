@@ -627,18 +627,37 @@
         <h2>Types</h2>
         <div class="buttons" id="types-buttons">
           <button class="button active" data-type="0">Default</button>
-          <button class="button" data-type="1">Description</button>
-          <button class="button" data-type="2">Success</button>
-          <button class="button" data-type="3">Info</button>
-          <button class="button" data-type="4">Warning</button>
-          <button class="button" data-type="5">Error</button>
-          <button class="button" data-type="6">Action</button>
-          <button class="button" data-type="7">Promise</button>
-          <button class="button" data-type="8">Loading</button>
+          <button class="button" data-type="1">Success</button>
+          <button class="button" data-type="2">Info</button>
+          <button class="button" data-type="3">Warning</button>
+          <button class="button" data-type="4">Error</button>
+          <button class="button" data-type="5">Loading</button>
+          <button class="button" data-type="6">Promise</button>
         </div>
         <div class="code-outer">
           <div class="code-wrapper">
             <pre><code id="types-code">toast('Event has been created')</code></pre>
+          </div>
+          <button class="copy-btn" aria-label="Copy code">
+            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+          </button>
+        </div>
+      </section>
+
+      <section id="description">
+        <h2>Description</h2>
+        <p>Add a description to any toast type.</p>
+        <div class="buttons" id="description-buttons">
+          <button class="button active" data-desc="default">Default</button>
+          <button class="button" data-desc="success">Success</button>
+          <button class="button" data-desc="error">Error</button>
+        </div>
+        <div class="code-outer">
+          <div class="code-wrapper">
+            <pre><code id="description-code">toast('Event has been created', {
+  description: 'Monday, January 3rd at 6:00pm'
+})</code></pre>
           </div>
           <button class="copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
@@ -813,19 +832,20 @@
         </div>
       </section>
 
-      <section id="cancel">
-        <h2>Cancel</h2>
-        <p>Add a cancel button alongside or instead of an action button.</p>
-        <div class="buttons">
-          <button class="button" id="cancel-demo-btn">With Cancel</button>
-          <button class="button" id="cancel-action-demo-btn">Action + Cancel</button>
+      <section id="action-cancel">
+        <h2>Action &amp; Cancel</h2>
+        <p>Add action and cancel buttons to any toast.</p>
+        <div class="buttons" id="action-cancel-buttons">
+          <button class="button active" data-ac="action">Action</button>
+          <button class="button" data-ac="cancel">Cancel</button>
+          <button class="button" data-ac="both">Both</button>
         </div>
         <div class="code-outer">
           <div class="code-wrapper">
-            <pre><code id="cancel-code">toast('Event has been created', {
-  cancel: {
-    label: 'Cancel',
-    onClick: () => console.log('Cancel')
+            <pre><code id="action-cancel-code">toast('Event has been created', {
+  action: {
+    label: 'Undo',
+    onClick: () => console.log('Undo')
   }
 })</code></pre>
           </div>
@@ -1023,10 +1043,6 @@ toast.dismiss()</code></pre>
         action: () => toast('Event has been created'),
       },
       {
-        snippet: `toast('Event has been created', {\n  description: 'Monday, January 3rd at 6:00pm'\n})`,
-        action: () => toast('Event has been created', { description: 'Monday, January 3rd at 6:00pm' }),
-      },
-      {
         snippet: `toast.success('Event has been created')`,
         action: () => toast.success('Event has been created'),
       },
@@ -1043,10 +1059,8 @@ toast.dismiss()</code></pre>
         action: () => toast.error('Event has not been created'),
       },
       {
-        snippet: `toast('Event has been created', {\n  action: {\n    label: 'Undo',\n    onClick: () => console.log('Undo')\n  }\n})`,
-        action: () => toast('Event has been created', {
-          action: { label: 'Undo', onClick: () => console.log('Undo') },
-        }),
+        snippet: `toast.loading('Loading data...')`,
+        action: () => toast.loading('Loading data...'),
       },
       {
         snippet: `const promise = new Promise((resolve) => {\n  setTimeout(resolve, 2000)\n})\n\ntoast.promise(promise, {\n  loading: 'Loading...',\n  success: 'Event has been created',\n  error: 'Error'\n})`,
@@ -1059,10 +1073,6 @@ toast.dismiss()</code></pre>
           });
         },
       },
-      {
-        snippet: `toast.loading('Loading data...')`,
-        action: () => toast.loading('Loading data...'),
-      },
     ];
 
     const typesCode = document.getElementById('types-code');
@@ -1073,6 +1083,32 @@ toast.dismiss()</code></pre>
       activate(document.getElementById('types-buttons'), btn);
       typesDemos[idx].action();
       typesCode.textContent = typesDemos[idx].snippet;
+    });
+
+    // Description
+    const descCode = document.getElementById('description-code');
+    const descDemos = {
+      default: {
+        snippet: `toast('Event has been created', {\n  description: 'Monday, January 3rd at 6:00pm'\n})`,
+        action: () => toast('Event has been created', { description: 'Monday, January 3rd at 6:00pm' }),
+      },
+      success: {
+        snippet: `toast.success('Event has been created', {\n  description: 'Monday, January 3rd at 6:00pm'\n})`,
+        action: () => toast.success('Event has been created', { description: 'Monday, January 3rd at 6:00pm' }),
+      },
+      error: {
+        snippet: `toast.error('Event has not been created', {\n  description: 'Please try again later'\n})`,
+        action: () => toast.error('Event has not been created', { description: 'Please try again later' }),
+      },
+    };
+
+    document.getElementById('description-buttons').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-desc]');
+      if (!btn) return;
+      activate(document.getElementById('description-buttons'), btn);
+      const demo = descDemos[btn.dataset.desc];
+      demo.action();
+      descCode.textContent = demo.snippet;
     });
 
     // Position
@@ -1225,21 +1261,37 @@ toast.dismiss()</code></pre>
       customHtmlCode.textContent = htmlDemos[2].snippet;
     });
 
-    // Cancel
-    const cancelCode = document.getElementById('cancel-code');
-    document.getElementById('cancel-demo-btn').addEventListener('click', () => {
-      toast('Event has been created', {
-        cancel: { label: 'Cancel', onClick: () => console.log('Cancel') },
-      });
-      cancelCode.textContent = `toast('Event has been created', {\n  cancel: {\n    label: 'Cancel',\n    onClick: () => console.log('Cancel')\n  }\n})`;
-    });
+    // Action & Cancel
+    const acCode = document.getElementById('action-cancel-code');
+    const acDemos = {
+      action: {
+        snippet: `toast('Event has been created', {\n  action: {\n    label: 'Undo',\n    onClick: () => console.log('Undo')\n  }\n})`,
+        action: () => toast('Event has been created', {
+          action: { label: 'Undo', onClick: () => console.log('Undo') },
+        }),
+      },
+      cancel: {
+        snippet: `toast('Event has been created', {\n  cancel: {\n    label: 'Cancel',\n    onClick: () => console.log('Cancel')\n  }\n})`,
+        action: () => toast('Event has been created', {
+          cancel: { label: 'Cancel', onClick: () => console.log('Cancel') },
+        }),
+      },
+      both: {
+        snippet: `toast('Event has been created', {\n  action: {\n    label: 'Undo',\n    onClick: () => console.log('Undo')\n  },\n  cancel: {\n    label: 'Cancel',\n    onClick: () => console.log('Cancel')\n  }\n})`,
+        action: () => toast('Event has been created', {
+          action: { label: 'Undo', onClick: () => console.log('Undo') },
+          cancel: { label: 'Cancel', onClick: () => console.log('Cancel') },
+        }),
+      },
+    };
 
-    document.getElementById('cancel-action-demo-btn').addEventListener('click', () => {
-      toast('Event has been created', {
-        action: { label: 'Undo', onClick: () => console.log('Undo') },
-        cancel: { label: 'Cancel', onClick: () => console.log('Cancel') },
-      });
-      cancelCode.textContent = `toast('Event has been created', {\n  action: {\n    label: 'Undo',\n    onClick: () => console.log('Undo')\n  },\n  cancel: {\n    label: 'Cancel',\n    onClick: () => console.log('Cancel')\n  }\n})`;
+    document.getElementById('action-cancel-buttons').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-ac]');
+      if (!btn) return;
+      activate(document.getElementById('action-cancel-buttons'), btn);
+      const demo = acDemos[btn.dataset.ac];
+      demo.action();
+      acCode.textContent = demo.snippet;
     });
 
     // Invert
