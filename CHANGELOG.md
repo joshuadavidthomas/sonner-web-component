@@ -18,6 +18,11 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Changed
+
+- Extracted `ToastManager` class from `SonnerToaster` custom element, separating toast logic from web component lifecycle
+- Moved CSS from inline template literal to a standalone `styles.css` file
+
 ## [0.1.2]
 
 ### Fixed
