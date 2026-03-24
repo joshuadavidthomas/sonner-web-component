@@ -18,6 +18,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Fixed
+
+- Action and cancel buttons now render side-by-side instead of stacking vertically
+
 ## [0.1.0]
 
 ### Added
