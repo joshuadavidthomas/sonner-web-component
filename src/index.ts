@@ -62,10 +62,8 @@ class SonnerToasterElement extends HTMLElement {
 
     this.shadowRoot!.adoptedStyleSheets = [getSheet()];
 
-    const toaster = new SonnerToaster(this.shadowRoot!);
-    this.#toaster = toaster;
-
-    toaster.init(
+    this.#toaster = new SonnerToaster(
+      this.shadowRoot!,
       SonnerToasterElement.observedAttributes,
       (name) => this.getAttribute(name),
     );
@@ -75,21 +73,21 @@ class SonnerToasterElement extends HTMLElement {
 
     document.addEventListener(
       "visibilitychange",
-      () => toaster.handleVisibilityChange(document.hidden),
+      () => this.#toaster!.handleVisibilityChange(document.hidden),
       { signal },
     );
 
     document.addEventListener(
       "keydown",
-      (e) => toaster.handleKeydown(e, this.shadowRoot!.activeElement),
+      (e) => this.#toaster!.handleKeydown(e, this.shadowRoot!.activeElement),
       { signal },
     );
 
-    if (toaster.usesSystemTheme && window.matchMedia) {
+    if (this.#toaster!.usesSystemTheme && window.matchMedia) {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       mq.addEventListener(
         "change",
-        (e) => toaster.handleThemeChange(e.matches),
+        (e) => this.#toaster!.handleThemeChange(e.matches),
         { signal },
       );
     }
@@ -127,7 +125,7 @@ class SonnerToasterElement extends HTMLElement {
     }
 
     // Consume <sonner-toast> children after the page settles visually.
-    const delay = toaster.flushDelay;
+    const delay = this.#toaster!.flushDelay;
     window.addEventListener(
       "load",
       () => setTimeout(() => this.#flushChildMessages(), delay),

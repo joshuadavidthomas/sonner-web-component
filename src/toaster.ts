@@ -279,7 +279,7 @@ export class SonnerToaster {
   #idCounter: number = 0;
   #sectionEl: HTMLElement;
 
-  constructor(root: ShadowRoot) {
+  constructor(root: ShadowRoot, observedAttributes: string[], getAttribute: (name: string) => string | null) {
     const sectionEl = document.createElement("section");
     sectionEl.setAttribute("tabindex", "-1");
     sectionEl.setAttribute("aria-live", "polite");
@@ -287,14 +287,7 @@ export class SonnerToaster {
     sectionEl.setAttribute("aria-atomic", "false");
     root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
-    this.applyAttribute("container-aria-label", null);
-  }
 
-  get flushDelay(): number {
-    return this.#config.flushDelay;
-  }
-
-  init(observedAttributes: string[], getAttribute: (name: string) => string | null): void {
     for (const name of observedAttributes) {
       const value = getAttribute(name);
       if (value !== null) {
@@ -302,6 +295,7 @@ export class SonnerToaster {
       }
     }
 
+    this.applyAttribute("container-aria-label", null);
     this.#resolveTheme();
 
     if (this.#config.dir === "auto" || !this.#config.dir) {
@@ -310,6 +304,10 @@ export class SonnerToaster {
 
     const pos = this.#getPosition();
     this.#getOrCreateGroup(pos);
+  }
+
+  get flushDelay(): number {
+    return this.#config.flushDelay;
   }
 
   handleVisibilityChange(hidden: boolean): void {
