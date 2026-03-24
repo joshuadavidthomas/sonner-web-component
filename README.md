@@ -7,7 +7,7 @@ A web component port of [Sonner](https://sonner.emilkowal.ski/). No framework re
 Add the script tag to your page:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.2/dist/index.js"></script>
 ```
 
 Or install via npm with your preferred package manager:
@@ -21,7 +21,7 @@ npm install sonner-web-component
 Add `<sonner-toaster>` to your page.
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.2/dist/index.js"></script>
 
 <sonner-toaster></sonner-toaster>
 ```
