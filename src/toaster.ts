@@ -270,25 +270,6 @@ function toPublicToast(t: ToastState): Toast {
 
 
 
-export const OBSERVED_ATTRIBUTES = [
-  "position",
-  "theme",
-  "rich-colors",
-  "expand",
-  "close-button",
-  "invert",
-  "duration",
-  "gap",
-  "visible-toasts",
-  "offset",
-  "mobile-offset",
-  "dir",
-  "container-aria-label",
-  "flush-delay",
-  "burst-window",
-  "burst-linger",
-] as const;
-
 export class SonnerToaster {
   #config: ToasterConfig = { ...DEFAULTS };
   #resolvedTheme: "light" | "dark" = "light";
@@ -307,11 +288,8 @@ export class SonnerToaster {
     root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
 
-    for (const name of OBSERVED_ATTRIBUTES) {
-      const value = root.host.getAttribute(name);
-      if (value !== null) {
-        this.applyAttribute(name, value);
-      }
+    for (const { name, value } of root.host.attributes) {
+      this.applyAttribute(name, value);
     }
 
     this.applyAttribute("container-aria-label", null);
