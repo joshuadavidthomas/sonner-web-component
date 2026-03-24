@@ -1353,7 +1353,8 @@ class SonnerToaster extends HTMLElement {
         break;
       case "duration": {
         const n = Number(value);
-        this.#config.duration = Number.isFinite(n) ? n : DEFAULTS.duration;
+        this.#config.duration =
+          n === Infinity || Number.isFinite(n) ? n : DEFAULTS.duration;
         break;
       }
       case "gap": {
