@@ -13,9 +13,16 @@
  *   <sonner-toaster window="false"></sonner-toaster>
  */
 
-import type { Toast, ToastOptions, PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
-import { SonnerToaster, LEVELS } from "./toaster.js";
 import STYLES from "./styles.css" with { type: "text" };
+import type { Toast, ToastOptions } from "./toast.js";
+import type { PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
+import { SonnerToaster, LEVELS } from "./toaster.js";
+
+declare global {
+  interface Window {
+    toast?: ToastFunction;
+  }
+}
 
 // created once and shared across all instances via `adoptedStyleSheets`
 let sharedSheet: CSSStyleSheet | null = null;

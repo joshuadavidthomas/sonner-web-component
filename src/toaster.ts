@@ -1,56 +1,11 @@
-declare global {
-  interface Window {
-    toast?: ToastFunction;
-  }
-}
-
-type ToastType = "success" | "info" | "warning" | "error" | "loading" | "";
-
-type Position = "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right";
+import { SonnerToast, TIME_BEFORE_UNMOUNT } from "./toast.js";
+import type { ToastType, Position, SwipeDirection, Toast, ToastOptions, ToastData } from "./toast.js";
 
 type Theme = "light" | "dark" | "system";
 
 type Direction = "ltr" | "rtl" | "auto";
 
-type SwipeDirection = "up" | "down" | "left" | "right";
-
 type OffsetValue = string | number | Partial<Record<"top" | "right" | "bottom" | "left", string | number>>;
-
-export interface ToastAction {
-  label: string;
-  onClick: (e: MouseEvent) => void;
-}
-
-export interface Toast {
-  id: number;
-  type: ToastType;
-  title: string;
-  description: string;
-  html: string;
-  duration: number;
-  dismissible: boolean;
-  promise: boolean | null;
-  action: ToastAction | null;
-  cancel: ToastAction | null;
-}
-
-export interface ToastOptions {
-  id?: number;
-  description?: string;
-  duration?: number;
-  dismissible?: boolean;
-  richColors?: boolean;
-  closeButton?: boolean;
-  position?: Position;
-  html?: string;
-  action?: ToastAction;
-  cancel?: ToastAction;
-  invert?: boolean;
-  onDismiss?: (toast: Toast) => void;
-  onAutoClose?: (toast: Toast) => void;
-  title?: string;
-  message?: string;
-}
 
 export interface PromiseData<T = unknown> {
   loading?: string;
@@ -81,28 +36,6 @@ export interface ToasterConfig {
   burstLinger: number;
 }
 
-interface ToastState {
-  id: number;
-  type: ToastType;
-  title: string;
-  description: string;
-  html: string;
-  duration: number;
-  dismissible: boolean;
-  el: HTMLLIElement;
-  groupKey: string;
-  remainingTime: number;
-  closeTimerStart: number;
-  timeout: ReturnType<typeof setTimeout> | null;
-  offsetBeforeRemove: number;
-  initialHeight: number;
-  promise: boolean | null;
-  onDismiss: ((toast: Toast) => void) | null;
-  onAutoClose: ((toast: Toast) => void) | null;
-  action: ToastAction | null;
-  cancel: ToastAction | null;
-}
-
 interface HeightEntry {
   toastId: number;
   height: number;
@@ -121,34 +54,6 @@ interface GroupState {
 interface ParsedPosition {
   y: "top" | "bottom";
   x: "left" | "center" | "right";
-}
-
-interface BuildToastParams {
-  type: ToastType;
-  title: string;
-  description: string;
-  html: string;
-  richColors: boolean;
-  closeButton: boolean;
-  dismissible: boolean;
-  action: ToastAction | null;
-  cancel: ToastAction | null;
-  pos: ParsedPosition;
-  promise?: boolean;
-  invert: boolean;
-}
-
-interface SwipeState {
-  direction: "x" | "y" | null;
-  outDirection: SwipeDirection | null;
-  startX: number;
-  startY: number;
-  startTime: Date | null;
-}
-
-export interface ToastData extends ToastOptions {
-  type?: ToastType;
-  promise?: boolean;
 }
 
 export interface ConfigureOptions {
@@ -211,31 +116,6 @@ export const DEFAULTS: ToasterConfig = {
 };
 
 const TOAST_WIDTH: number = 356;
-const SWIPE_THRESHOLD: number = 45;
-const TIME_BEFORE_UNMOUNT: number = 200;
-
-const ICONS: Record<string, string> = {
-  success:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>',
-  warning:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 6a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 6zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>',
-  error:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"/></svg>',
-  info: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>',
-  debug:
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="20" height="20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/></svg>',
-};
-
-const CLOSE_ICON: string =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
-
-const LOADER_HTML: string = (() => {
-  let bars = "";
-  for (let i = 0; i < 12; i++) {
-    bars += `<div class="sonner-loading-bar" style="animation-delay:${-1.2 + i * 0.1}s;transform:rotate(${i * 30}deg) translate(146%)"></div>`;
-  }
-  return `<div class="sonner-loading-wrapper"><div class="sonner-spinner">${bars}</div></div>`;
-})();
 
 export const LEVELS: Set<string> = new Set(["success", "info", "warning", "error", "loading"]);
 
@@ -247,31 +127,10 @@ export const LEVEL_MAP: Record<string, ToastType> = {
   error: "error",
 };
 
-function escapeHtml(str: string): string {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function toPublicToast(t: ToastState): Toast {
-  return {
-    id: t.id,
-    type: t.type,
-    title: t.title,
-    description: t.description,
-    html: t.html,
-    duration: t.duration,
-    dismissible: t.dismissible,
-    promise: t.promise,
-    action: t.action,
-    cancel: t.cancel,
-  };
-}
-
 export class SonnerToaster {
   #config: ToasterConfig = { ...DEFAULTS };
   #resolvedTheme: "light" | "dark" = "light";
-  #toasts: ToastState[] = [];
+  #toasts: SonnerToast[] = [];
   #groups: Map<string, GroupState> = new Map();
   #documentHidden: boolean = false;
   #idCounter: number = 0;
@@ -309,9 +168,9 @@ export class SonnerToaster {
     for (const t of this.#toasts) {
       const g = this.#groups.get(t.groupKey);
       if (this.#documentHidden) {
-        this.#pauseTimer(t);
+        t.pauseTimer();
       } else if (!g?.expanded && !g?.interacting) {
-        this.#startTimer(t);
+        t.startTimer();
       }
     }
   }
@@ -493,7 +352,7 @@ export class SonnerToaster {
 
   reset(): void {
     for (const t of this.#toasts) {
-      if (t.timeout) clearTimeout(t.timeout);
+      t.clearTimer();
     }
     this.#toasts = [];
     const defaultKey = this.#positionKey(this.#getPosition());
@@ -518,14 +377,14 @@ export class SonnerToaster {
 
   destroy(): void {
     for (const t of this.#toasts) {
-      if (t.timeout) clearTimeout(t.timeout);
+      t.clearTimer();
     }
     this.#toasts = [];
     this.#groups.clear();
   }
 
   getToasts(): Toast[] {
-    return this.#toasts.map(toPublicToast);
+    return this.#toasts.map((t) => t.toPublic());
   }
 
   add(level: ToastType, message: string | ToastOptions, options?: ToastOptions): number {
@@ -540,14 +399,10 @@ export class SonnerToaster {
   dismiss(id?: number | null): number | undefined | null {
     if (id !== undefined && id !== null) {
       const t = this.#findToast(id);
-      if (t) {
-        t.onDismiss?.(toPublicToast(t));
-        this.#deleteToast(id);
-      }
+      if (t) t.dismiss();
     } else {
       for (const t of this.#toasts.slice()) {
-        t.onDismiss?.(toPublicToast(t));
-        this.#deleteToast(t.id);
+        t.dismiss();
       }
     }
     return id;
@@ -721,7 +576,7 @@ export class SonnerToaster {
     const defaultKey = this.#positionKey(this.#getPosition());
     if (group.key === defaultKey) return;
     const hasToasts = this.#toasts.some(
-      (t) => t.groupKey === group.key && t.el.getAttribute("data-state") !== "removing",
+      (t) => t.groupKey === group.key && !t.isRemoving,
     );
     if (!hasToasts) {
       group.listEl.remove();
@@ -816,76 +671,35 @@ export class SonnerToaster {
       ? this.#getPosition(data.position)
       : this.#getPosition();
     const group = this.#getOrCreateGroup(pos);
-
     const html = data.html || "";
 
-    const el = this.#buildToastElement({
-      type,
-      title,
-      description,
-      html,
-      richColors,
-      closeButton,
-      dismissible,
-      action,
-      cancel,
-      pos,
-      promise: data.promise,
-      invert: data.invert ?? this.#config.invert,
-    });
-
-    const t: ToastState = {
+    const t = new SonnerToast({
       id,
+      groupKey: group.key,
       type,
       title,
       description,
       html,
       duration,
       dismissible,
-      el,
-      groupKey: group.key,
-      remainingTime: duration,
-      closeTimerStart: 0,
-      timeout: null,
-      offsetBeforeRemove: 0,
-      initialHeight: 0,
+      richColors,
+      closeButton,
+      expand: this.#config.expand,
+      invert: data.invert ?? this.#config.invert,
+      action,
+      cancel,
       promise: data.promise || null,
       onDismiss: data.onDismiss || null,
       onAutoClose: data.onAutoClose || null,
-      action,
-      cancel,
-    };
-
-    if (closeButton) {
-      el.querySelector("[data-slot='close']")?.addEventListener("click", () => {
-        if (dismissible) {
-          this.#deleteToast(id);
-          t.onDismiss?.(toPublicToast(t));
-        }
-      });
-    }
-    if (cancel?.onClick) {
-      el.querySelector("[data-button='cancel']")?.addEventListener("click", (e) => {
-        if (!dismissible) return;
-        cancel.onClick(e as MouseEvent);
-        this.#deleteToast(id);
-      });
-    }
-    if (action?.onClick) {
-      el.querySelector("[data-button='action']")?.addEventListener("click", (e) => {
-        action.onClick(e as MouseEvent);
-        if (!e.defaultPrevented) this.#deleteToast(id);
-      });
-    }
-
-    this.#attachSwipeHandlers(el, t);
+      onRemove: (id) => this.#deleteToast(id),
+      getAllowedSwipeDirections: () => this.#getDefaultSwipeDirections(group.key),
+    });
 
     this.#toasts.unshift(t);
-    group.listEl.prepend(el);
+    group.listEl.prepend(t.el);
 
-    const measuredHeight = el.getBoundingClientRect().height;
-    t.initialHeight = measuredHeight;
-    group.heights.unshift({ toastId: id, height: measuredHeight });
+    const height = t.measureHeight();
+    group.heights.unshift({ toastId: id, height });
 
     this.#updateAll();
 
@@ -897,10 +711,9 @@ export class SonnerToaster {
       group.autoCollapseTimeout = setTimeout(() => {
         group.autoCollapseTimeout = null;
         if (!group.interacting) {
-          // Align dismiss timers so burst toasts leave together
           for (const t of this.#toasts) {
-            if (t.groupKey === group.key && t.type !== "loading" && t.duration !== Infinity) {
-              t.remainingTime = t.duration || this.#config.duration;
+            if (t.groupKey === group.key) {
+              t.resetTimer(this.#config.duration);
             }
           }
           group.expanded = false;
@@ -912,277 +725,20 @@ export class SonnerToaster {
     group.lastToastTime = now;
 
     requestAnimationFrame(() => {
-      el.setAttribute("data-state", "mounted");
-      this.#startTimer(t);
+      t.mount();
+      t.startTimer();
     });
 
     return id;
   }
 
-  #buildToastElement({
-    type,
-    title,
-    description,
-    html,
-    richColors,
-    closeButton,
-    dismissible,
-    action,
-    cancel,
-    promise,
-    invert,
-  }: BuildToastParams): HTMLLIElement {
-    const el = document.createElement("li");
-    el.setAttribute("tabindex", "0");
-    el.setAttribute("data-sonner-toast", "");
-    el.setAttribute("data-type", type);
-    el.setAttribute("data-state", "mounting");
-    el.setAttribute("data-visible", "true");
-    el.setAttribute("data-index", "0");
-    el.setAttribute("data-swipe", "idle");
-    el.setAttribute("data-dismissible", String(dismissible));
-    el.setAttribute("data-expanded", String(this.#config.expand));
-    el.setAttribute("data-rich-colors", String(richColors));
-    el.setAttribute("data-promise", String(!!promise));
-    el.setAttribute("data-invert", String(!!invert));
+  #updateToast(t: SonnerToast, data: ToastData): number {
+    t.update(data, this.#config.duration);
 
-    let markup = "";
-
-    if (closeButton && type !== "loading") {
-      markup += `<button aria-label="Close toast" data-slot="close">${CLOSE_ICON}</button>`;
-    }
-
-    const iconHtml =
-      type === "loading" ? LOADER_HTML : (ICONS[type] || "");
-    if (iconHtml) markup += `<div data-slot="icon">${iconHtml}</div>`;
-
-    if (html) {
-      markup += '<div data-slot="content"></div>';
-    } else {
-      markup += '<div data-slot="title"></div>';
-      if (description) markup += '<div data-slot="description"></div>';
-    }
-
-    if (cancel?.label || action?.label) {
-      markup += '<div data-slot="buttons">';
-      if (cancel?.label)
-        markup += `<button data-button="cancel">${escapeHtml(cancel.label)}</button>`;
-      if (action?.label)
-        markup += `<button data-button="action">${escapeHtml(action.label)}</button>`;
-      markup += '</div>';
-    }
-
-    el.innerHTML = markup;
-
-    if (html) {
-      const contentEl = el.querySelector("[data-slot='content']");
-      if (contentEl) contentEl.innerHTML = html;
-    } else {
-      const titleEl = el.querySelector("[data-slot='title']");
-      if (titleEl) titleEl.textContent = title;
-
-      const descEl = el.querySelector("[data-slot='description']");
-      if (descEl) descEl.textContent = description;
-    }
-
-    return el;
-  }
-
-  #attachSwipeHandlers(el: HTMLLIElement, t: ToastState): void {
-    const swipe: SwipeState = {
-      direction: null,
-      outDirection: null,
-      startX: 0,
-      startY: 0,
-      startTime: null,
-    };
-
-    el.addEventListener("pointerdown", (e) => {
-      if (e.button === 2 || t.type === "loading" || !t.dismissible) return;
-      swipe.startTime = new Date();
-      swipe.direction = null;
-      const target = e.target as HTMLElement;
-      target.setPointerCapture(e.pointerId);
-      if (target.tagName === "BUTTON") return;
-      el.setAttribute("data-swipe", "active");
-      swipe.startX = e.clientX;
-      swipe.startY = e.clientY;
-    });
-
-    el.addEventListener("pointermove", (e) => {
-      if (!swipe.startTime || !t.dismissible) return;
-      if ((window.getSelection?.()?.toString().length ?? 0) > 0) return;
-
-      const xDelta = e.clientX - swipe.startX;
-      const yDelta = e.clientY - swipe.startY;
-      const allowed = this.#getDefaultSwipeDirections(t.groupKey);
-
-      if (
-        !swipe.direction &&
-        (Math.abs(xDelta) > 1 || Math.abs(yDelta) > 1)
-      ) {
-        swipe.direction =
-          Math.abs(xDelta) > Math.abs(yDelta) ? "x" : "y";
-      }
-
-      const amount = { x: 0, y: 0 };
-      const dampen = (delta: number): number => 1 / (1.5 + Math.abs(delta) / 20);
-
-      if (swipe.direction === "y") {
-        if (
-          allowed.includes("top") ||
-          allowed.includes("bottom")
-        ) {
-          if (
-            (allowed.includes("top") && yDelta < 0) ||
-            (allowed.includes("bottom") && yDelta > 0)
-          ) {
-            amount.y = yDelta;
-          } else {
-            const d = yDelta * dampen(yDelta);
-            amount.y = Math.abs(d) < Math.abs(yDelta) ? d : yDelta;
-          }
-        }
-      } else if (swipe.direction === "x") {
-        if (
-          allowed.includes("left") ||
-          allowed.includes("right")
-        ) {
-          if (
-            (allowed.includes("left") && xDelta < 0) ||
-            (allowed.includes("right") && xDelta > 0)
-          ) {
-            amount.x = xDelta;
-          } else {
-            const d = xDelta * dampen(xDelta);
-            amount.x = Math.abs(d) < Math.abs(xDelta) ? d : xDelta;
-          }
-        }
-      }
-
-      if (Math.abs(amount.x) > 0 || Math.abs(amount.y) > 0) {
-        // displacement tracked via data-swipe="active"
-      }
-      el.style.setProperty("--swipe-amount-x", `${amount.x}px`);
-      el.style.setProperty("--swipe-amount-y", `${amount.y}px`);
-    });
-
-    el.addEventListener("pointerup", () => {
-      if (!swipe.startTime || !t.dismissible) return;
-
-      const amtX =
-        parseFloat(el.style.getPropertyValue("--swipe-amount-x")) || 0;
-      const amtY =
-        parseFloat(el.style.getPropertyValue("--swipe-amount-y")) || 0;
-      const elapsed = Date.now() - swipe.startTime.getTime();
-      const amount = swipe.direction === "x" ? amtX : amtY;
-      const velocity = Math.abs(amount) / elapsed;
-
-      if (Math.abs(amount) >= SWIPE_THRESHOLD || velocity > 0.11) {
-        swipe.outDirection =
-          swipe.direction === "x"
-            ? amtX > 0
-              ? "right"
-              : "left"
-            : amtY > 0
-              ? "down"
-              : "up";
-        el.setAttribute("data-swipe", "committed");
-        el.setAttribute("data-swipe-direction", swipe.outDirection);
-        t.onDismiss?.(toPublicToast(t));
-        this.#deleteToast(t.id);
-        return;
-      }
-
-      el.style.setProperty("--swipe-amount-x", "0px");
-      el.style.setProperty("--swipe-amount-y", "0px");
-      el.setAttribute("data-swipe", "idle");
-      swipe.direction = null;
-      swipe.startTime = null;
-    });
-
-    el.addEventListener("dragend", () => {
-      el.setAttribute("data-swipe", "idle");
-      swipe.direction = null;
-      swipe.startTime = null;
-    });
-  }
-
-  #updateToast(t: ToastState, data: ToastData): number {
-    if (data.type !== undefined) t.type = data.type;
-    if (data.title !== undefined || data.message !== undefined) {
-      t.title = data.title || data.message || "";
-    }
-    if (data.description !== undefined) t.description = data.description;
-    if (data.html !== undefined) t.html = data.html;
-    if (data.duration !== undefined) {
-      t.duration = data.duration;
-      t.remainingTime = data.duration;
-    }
-
-    const el = t.el;
-    if (t.type) el.setAttribute("data-type", t.type);
-    if (data.promise !== undefined) {
-      el.setAttribute("data-promise", String(!!data.promise));
-    }
-
-    const iconEl = el.querySelector("[data-slot='icon']");
-    if (iconEl) {
-      const type: ToastType = t.type;
-      iconEl.innerHTML =
-        type === "loading" ? LOADER_HTML : (ICONS[type] || "");
-    }
-
-    if (data.html !== undefined) {
-      const contentEl = el.querySelector("[data-slot='content']");
-      if (contentEl) {
-        contentEl.innerHTML = data.html;
-      } else {
-        el.querySelector("[data-slot='title']")?.remove();
-        el.querySelector("[data-slot='description']")?.remove();
-        const newContent = document.createElement("div");
-        newContent.setAttribute("data-slot", "content");
-        newContent.innerHTML = data.html;
-        const icon = el.querySelector("[data-slot='icon']");
-        if (icon) {
-          icon.after(newContent);
-        } else {
-          el.prepend(newContent);
-        }
-      }
-    } else {
-      const titleEl = el.querySelector("[data-slot='title']");
-      if (titleEl) titleEl.textContent = t.title;
-
-      const descEl = el.querySelector("[data-slot='description']");
-      if (t.description && !descEl) {
-        const titleEl2 = el.querySelector("[data-slot='title']");
-        if (titleEl2) {
-          const newDesc = document.createElement("div");
-          newDesc.setAttribute("data-slot", "description");
-          newDesc.textContent = t.description;
-          titleEl2.after(newDesc);
-        }
-      } else if (descEl) {
-        descEl.textContent = t.description || "";
-      }
-    }
-
-    const newHeight = el.getBoundingClientRect().height;
-    t.initialHeight = newHeight;
     const group = this.#groups.get(t.groupKey);
     if (group) {
       const h = group.heights.find((h) => h.toastId === t.id);
-      if (h) h.height = newHeight;
-    }
-
-    if (t.type !== "loading") {
-      if (t.duration === Infinity) {
-        t.duration = this.#config.duration;
-      }
-      if (t.timeout) clearTimeout(t.timeout);
-      t.remainingTime = t.duration || this.#config.duration;
-      this.#startTimer(t);
+      if (h) h.height = t.initialHeight;
     }
 
     this.#updateAll();
@@ -1194,20 +750,17 @@ export class SonnerToaster {
     if (!t) return;
 
     const group = this.#groups.get(t.groupKey);
-
-    t.offsetBeforeRemove = this.#getToastOffset(t);
-    t.el.setAttribute("data-state", "removing");
-    t.el.style.setProperty("--offset", `${t.offsetBeforeRemove}px`);
+    const offset = this.#getToastOffset(t);
+    t.beginRemoval(offset);
 
     if (group) {
       group.heights = group.heights.filter((h) => h.toastId !== id);
     }
     this.#updateAll();
-    if (t.timeout) clearTimeout(t.timeout);
 
     setTimeout(() => {
       this.#toasts = this.#toasts.filter((x) => x.id !== id);
-      t.el.remove();
+      t.remove();
       if (group) {
         const remaining = this.#toasts.filter(
           (x) => x.groupKey === group.key,
@@ -1219,11 +772,11 @@ export class SonnerToaster {
     }, TIME_BEFORE_UNMOUNT);
   }
 
-  #findToast(id: number): ToastState | null {
+  #findToast(id: number): SonnerToast | null {
     return this.#toasts.find((t) => t.id === id) || null;
   }
 
-  #getToastOffset(t: ToastState): number {
+  #getToastOffset(t: SonnerToast): number {
     const group = this.#groups.get(t.groupKey);
     if (!group) return 0;
     const heightIdx = group.heights.findIndex((h) => h.toastId === t.id);
@@ -1246,61 +799,22 @@ export class SonnerToaster {
 
       for (let i = 0; i < groupToasts.length; i++) {
         const t = groupToasts[i];
-        const el = t.el;
         const isVisible = i < this.#config.visibleToasts;
         const isExpanded = group.expanded || this.#config.expand;
 
-        el.setAttribute("data-visible", String(isVisible));
-        el.setAttribute("data-expanded", String(isExpanded));
-        el.setAttribute("data-index", String(i));
+        const offset = t.isRemoving
+          ? t.offsetBeforeRemove
+          : this.#getToastOffset(t);
+        t.updateLayout(i, offset, isVisible, isExpanded, groupToasts.length);
 
-        let offset = this.#getToastOffset(t);
-        if (el.getAttribute("data-state") === "removing") {
-          offset = t.offsetBeforeRemove;
-        }
-
-        el.style.setProperty("--index", String(i));
-        el.style.setProperty("--toasts-before", String(i));
-        el.style.setProperty("--z-index", String(groupToasts.length - i));
-        el.style.setProperty("--offset", `${offset}px`);
-        el.style.setProperty(
-          "--initial-height",
-          isExpanded ? "auto" : `${t.initialHeight}px`,
-        );
-
-        if (el.getAttribute("data-state") !== "removing") {
+        if (!t.isRemoving) {
           if (isExpanded || group.interacting || this.#documentHidden) {
-            this.#pauseTimer(t);
+            t.pauseTimer();
           } else {
-            this.#startTimer(t);
+            t.startTimer();
           }
         }
       }
     }
-  }
-
-  #startTimer(t: ToastState): void {
-    if (!t || t.type === "loading" || t.duration === Infinity) return;
-    const group = this.#groups.get(t.groupKey);
-    if (group?.expanded || group?.interacting || this.#documentHidden) return;
-    if (t.closeTimerStart && t.timeout) return;
-    if (t.remainingTime <= 0) {
-      t.remainingTime = t.duration || this.#config.duration;
-    }
-    if (t.timeout) clearTimeout(t.timeout);
-    t.closeTimerStart = Date.now();
-    t.timeout = setTimeout(() => {
-      t.onAutoClose?.(toPublicToast(t));
-      this.#deleteToast(t.id);
-    }, t.remainingTime);
-  }
-
-  #pauseTimer(t: ToastState): void {
-    if (!t?.closeTimerStart) return;
-    if (t.timeout) clearTimeout(t.timeout);
-    t.timeout = null;
-    const elapsed = Date.now() - t.closeTimerStart;
-    t.remainingTime = Math.max(0, t.remainingTime - elapsed);
-    t.closeTimerStart = 0;
   }
 }
