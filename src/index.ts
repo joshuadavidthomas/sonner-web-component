@@ -65,11 +65,10 @@ class SonnerToasterElement extends HTMLElement {
     const toaster = new SonnerToaster(this.shadowRoot!);
     this.#toaster = toaster;
 
-    toaster.initConfig(
+    toaster.init(
       SonnerToasterElement.observedAttributes,
       (name) => this.getAttribute(name),
     );
-    toaster.setupInitialState();
 
     this.#abortController = new AbortController();
     const { signal } = this.#abortController;
@@ -128,7 +127,7 @@ class SonnerToasterElement extends HTMLElement {
     }
 
     // Consume <sonner-toast> children after the page settles visually.
-    const delay = toaster.config.flushDelay;
+    const delay = toaster.flushDelay;
     window.addEventListener(
       "load",
       () => setTimeout(() => this.#flushChildMessages(), delay),
@@ -209,10 +208,7 @@ class SonnerToasterElement extends HTMLElement {
   #flushChildMessages(): void {
     const children = this.querySelectorAll("sonner-toast");
     if (children.length === 0) return;
-    this.#toaster?.flushChildToasts(
-      children,
-      (level, message, opts) => this.add(level, message, opts),
-    );
+    this.#toaster?.flushChildToasts(children);
   }
 }
 

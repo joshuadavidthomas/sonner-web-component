@@ -290,21 +290,19 @@ export class SonnerToaster {
     this.applyAttribute("container-aria-label", null);
   }
 
-  get config(): ToasterConfig {
-    return this.#config;
+  get flushDelay(): number {
+    return this.#config.flushDelay;
   }
 
-  initConfig(observedAttributes: string[], getAttribute: (name: string) => string | null): void {
+  init(observedAttributes: string[], getAttribute: (name: string) => string | null): void {
     for (const name of observedAttributes) {
       const value = getAttribute(name);
       if (value !== null) {
         this.applyAttribute(name, value);
       }
     }
-  }
 
-  setupInitialState(): void {
-    this.resolveTheme();
+    this.#resolveTheme();
 
     if (this.#config.dir === "auto" || !this.#config.dir) {
       this.#config.dir = this.#getDocumentDirection() as Direction;
@@ -365,7 +363,7 @@ export class SonnerToaster {
     return this.#config.theme === "system";
   }
 
-  resolveTheme(): void {
+  #resolveTheme(): void {
     if (this.#config.theme !== "system") {
       this.#resolvedTheme = this.#config.theme;
       return;
@@ -484,7 +482,7 @@ export class SonnerToaster {
 
   handleAttributeChange(): void {
     if (this.#groups.size === 0) return;
-    this.resolveTheme();
+    this.#resolveTheme();
     const dir = this.#config.dir === "auto"
       ? this.#getDocumentDirection()
       : this.#config.dir;
@@ -635,17 +633,17 @@ export class SonnerToaster {
     return id;
   }
 
-  flushChildToasts(children: NodeListOf<Element>, addFn: (level: ToastType, message: string, opts?: ToastOptions) => number): void {
+  flushChildToasts(children: NodeListOf<Element>): void {
     for (const el of children) {
       const rawLevel = el.getAttribute("level") || "info";
       const level = (LEVEL_MAP[rawLevel] || rawLevel) as ToastType;
       const description = el.getAttribute("description") || undefined;
       const hasElements = el.querySelector("*") !== null;
       if (hasElements) {
-        addFn(level, "", { html: el.innerHTML.trim(), description });
+        this.add(level, "", { html: el.innerHTML.trim(), description });
       } else {
         const message = el.textContent?.trim() || "";
-        if (message) addFn(level, message, { description });
+        if (message) this.add(level, message, { description });
       }
       el.remove();
     }
