@@ -48,10 +48,13 @@
   "scripts": {
     "build": "rm -rf dist && bun build src/index.ts src/bridges/alpine.ts src/bridges/fetch.ts src/bridges/htmx.ts --outdir dist --sourcemap=linked --splitting && tsc --emitDeclarationOnly",
     "dev": "bun build src/index.ts src/bridges/alpine.ts src/bridges/fetch.ts src/bridges/htmx.ts --outdir dist --sourcemap=linked --splitting --watch",
+    "prepublishOnly": "bun run build",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "bun run build"
+    "web:dev": "wrangler dev",
+    "web:deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "wrangler": "^4.76.0"
   }
 }

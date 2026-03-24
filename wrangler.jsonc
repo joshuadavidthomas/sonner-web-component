@@ -1,0 +1,9 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sonner-web-component",
+	"account_id": "0d52c99870b49aa52ccc7d5feca16714",
+	"compatibility_date": "2026-03-10",
+	"assets": {
+		"directory": "./web"
+	}
+}
