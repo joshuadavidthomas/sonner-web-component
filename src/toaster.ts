@@ -287,7 +287,7 @@ export class SonnerToaster {
     sectionEl.setAttribute("aria-atomic", "false");
     root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
-    this.#updateAriaLabel();
+    this.applyAttribute("container-aria-label", null);
   }
 
   get config(): ToasterConfig {
@@ -440,10 +440,18 @@ export class SonnerToaster {
       case "dir":
         this.#config.dir = (value || DEFAULTS.dir) as Direction;
         break;
-      case "container-aria-label":
+      case "container-aria-label": {
         this.#config.containerAriaLabel = value || DEFAULTS.containerAriaLabel;
-        this.#updateAriaLabel();
+        const hotkeyLabel = this.#config.hotkey
+          .join("+")
+          .replace(/Key/g, "")
+          .replace(/Digit/g, "");
+        this.#sectionEl.setAttribute(
+          "aria-label",
+          `${this.#config.containerAriaLabel} ${hotkeyLabel}`,
+        );
         break;
+      }
       case "flush-delay": {
         const n = Number(value);
         if (!Number.isFinite(n)) {
@@ -641,17 +649,6 @@ export class SonnerToaster {
       }
       el.remove();
     }
-  }
-
-  #updateAriaLabel(): void {
-    const hotkeyLabel = this.#config.hotkey
-      .join("+")
-      .replace(/Key/g, "")
-      .replace(/Digit/g, "");
-    this.#sectionEl.setAttribute(
-      "aria-label",
-      `${this.#config.containerAriaLabel} ${hotkeyLabel}`,
-    );
   }
 
   #getDocumentDirection(): string {
