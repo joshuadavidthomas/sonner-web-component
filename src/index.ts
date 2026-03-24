@@ -13,8 +13,8 @@
  *   <sonner-toaster window="false"></sonner-toaster>
  */
 
-import type { Toast, ToastOptions, PromiseData, ConfigureOptions, ToastFunction } from "./manager.js";
-import { SonnerToaster, LEVELS } from "./manager.js";
+import type { Toast, ToastOptions, PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
+import { SonnerToaster, LEVELS } from "./toaster.js";
 import STYLES from "./styles.css" with { type: "text" };
 
 // created once and shared across all instances via `adoptedStyleSheets`
