@@ -18,6 +18,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+## [0.1.2]
+
 ### Fixed
 
 - Setting `duration="Infinity"` on `<sonner-toaster>` now correctly prevents auto-dismissal instead of silently falling back to the default 4000ms
@@ -51,6 +53,7 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 - Josh Thomas <josh@joshthomas.dev> (maintainer)
 
-[unreleased]: https://github.com/joshuadavidthomas/sonner-web-component/compare/v0.1.1...HEAD
+[unreleased]: https://github.com/joshuadavidthomas/sonner-web-component/compare/v0.1.2...HEAD
 [0.1.0]: https://github.com/joshuadavidthomas/sonner-web-component/releases/tag/v0.1.0
 [0.1.1]: https://github.com/joshuadavidthomas/sonner-web-component/releases/tag/v0.1.1
+[0.1.2]: https://github.com/joshuadavidthomas/sonner-web-component/releases/tag/v0.1.2
