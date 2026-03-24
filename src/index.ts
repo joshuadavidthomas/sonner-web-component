@@ -62,10 +62,7 @@ class SonnerToasterElement extends HTMLElement {
 
     this.shadowRoot!.adoptedStyleSheets = [getSheet()];
 
-    const sectionEl = document.createElement("section");
-    this.shadowRoot!.appendChild(sectionEl);
-
-    const toaster = new SonnerToaster(sectionEl);
+    const toaster = new SonnerToaster(this.shadowRoot!);
     this.#toaster = toaster;
 
     toaster.initConfig(
@@ -73,16 +70,6 @@ class SonnerToasterElement extends HTMLElement {
       (name) => this.getAttribute(name),
     );
     toaster.setupInitialState();
-
-    const hotkeyLabel = toaster.getHotkeyLabel();
-    sectionEl.setAttribute(
-      "aria-label",
-      `${toaster.config.containerAriaLabel} ${hotkeyLabel}`,
-    );
-    sectionEl.setAttribute("tabindex", "-1");
-    sectionEl.setAttribute("aria-live", "polite");
-    sectionEl.setAttribute("aria-relevant", "additions text");
-    sectionEl.setAttribute("aria-atomic", "false");
 
     this.#abortController = new AbortController();
     const { signal } = this.#abortController;
