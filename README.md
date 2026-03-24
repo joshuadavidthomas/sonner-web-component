@@ -1,4 +1,4 @@
-# sonner-web-component
+# Sonner Web Component
 
 A web component port of [Sonner](https://sonner.emilkowal.ski/). No framework required — use it with Django, Rails, Laravel, htmx, Alpine.js, or plain HTML.
 
@@ -227,7 +227,7 @@ toast.getToasts()
 
 ### Bridges
 
-Bridges connect sonner-web-component to other libraries. Each bridge is a side-effect import — add the script tag and it wires itself up. No configuration needed.
+Bridges connect Sonner Web Component to other libraries. Each bridge is a side-effect import — add the script tag and it wires itself up. No configuration needed.
 
 #### htmx
 
@@ -304,6 +304,6 @@ The `$toast` magic supports all the same methods: `$toast.success()`, `$toast.er
 
 ## License
 
-sonner-web-component is licensed under the MIT license. See the [`LICENSE`](LICENSE) file for more information.
+Sonner Web Component is licensed under the MIT license. See the [`LICENSE`](LICENSE) file for more information.
 
 Sonner is licensed under the MIT license and is Copyright (c) 2023 Emil Kowalski.

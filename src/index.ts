@@ -1,5 +1,5 @@
 /**
- * sonner-web-component — A web component port of Sonner.
+ * Sonner Web Component — A web component port of Sonner.
  *
  * Usage:
  *   <script type="module" src="sonner-web-component.js"></script>
