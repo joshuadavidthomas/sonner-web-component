@@ -7,7 +7,7 @@ A web component port of [Sonner](https://sonner.emilkowal.ski/). No framework re
 Add the script tag to your page:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
 ```
 
 Or install via npm with your preferred package manager:
@@ -21,7 +21,7 @@ npm install sonner-web-component
 Add `<sonner-toaster>` to your page.
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
 
 <sonner-toaster></sonner-toaster>
 ```
@@ -30,7 +30,7 @@ Render a toast.
 
 ```html
 <script type="module">
-  import { toast } from "https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/index.js"
+  import { toast } from "https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"
   toast("Hello!")
 </script>
 ```
@@ -235,8 +235,8 @@ The htmx bridge listens for `toast` events on `document`, which is how htmx disp
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.x.x/dist/htmx.min.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/index.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/bridges/htmx.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/bridges/htmx.js"></script>
 
 <sonner-toaster></sonner-toaster>
 
@@ -262,8 +262,8 @@ HX-Trigger: {"toast": [{"level": "success", "message": "Saved!"}, {"level": "inf
 The fetch bridge lets your server trigger toasts from any `fetch` call — form submissions, API requests, or anything else that uses `fetch`. It also works as a way to connect an SPA to a server-rendered page that hosts the toaster. It monkey-patches `window.fetch` to read the `X-Toasts` header from every response. If the header is present, the toasts are rendered automatically.
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/index.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/bridges/fetch.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/bridges/fetch.js"></script>
 
 <sonner-toaster></sonner-toaster>
 
@@ -287,8 +287,8 @@ The `level` field accepts `"success"`, `"info"`, `"warning"`, or `"error"`. The 
 The Alpine.js bridge registers a `$toast` [magic](https://alpinejs.dev/magics) that exposes the full toast API inside Alpine expressions.
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/index.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.0/dist/bridges/alpine.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/index.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component@0.1.1/dist/bridges/alpine.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <sonner-toaster></sonner-toaster>

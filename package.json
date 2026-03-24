@@ -1,6 +1,6 @@
 {
   "name": "sonner-web-component",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "An opinionated toast web component, a port of @emilkowalski's Sonner.",
   "author": "Josh Thomas <josh@joshthomas.dev>",
