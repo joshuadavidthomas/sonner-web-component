@@ -13,7 +13,8 @@
  *   <sonner-toaster window="false"></sonner-toaster>
  */
 
-import type { Toast, ToastOptions, PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
+import type { Toast, ToastOptions } from "./toast.js";
+import type { PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
 import { SonnerToaster, LEVELS } from "./toaster.js";
 import STYLES from "./styles.css" with { type: "text" };
 
