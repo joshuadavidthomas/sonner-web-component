@@ -43,6 +43,7 @@
       --spacing-8: calc(var(--spacing) * 8);
       --spacing-10: calc(var(--spacing) * 10);
       --spacing-12: calc(var(--spacing) * 12);
+      --spacing-14: calc(var(--spacing) * 14);
       --spacing-16: calc(var(--spacing) * 16);
       --spacing-24: calc(var(--spacing) * 24);
       --spacing-32: calc(var(--spacing) * 32);
@@ -444,6 +445,7 @@
 
     .code-wrapper pre {
       padding: var(--spacing-4);
+      padding-right: var(--spacing-14);
       margin: 0;
       background: linear-gradient(to top, var(--gray2), var(--gray1) var(--spacing-4));
       font-family: var(--font-mono);
@@ -452,6 +454,16 @@
       overflow-x: auto;
       color: var(--gray12);
       line-height: 0;
+    }
+
+    @media (width >= 40rem) {
+      .code-wrapper pre {
+        padding-right: var(--spacing-4);
+      }
+
+      .code-wrapper:hover pre {
+        padding-right: var(--spacing-14);
+      }
     }
 
     #installation .code-wrapper pre {
