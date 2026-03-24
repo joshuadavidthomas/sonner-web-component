@@ -16,6 +16,12 @@
 import type { Toast, ToastOptions } from "./toast.js";
 import type { PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
 import { SonnerToaster, LEVELS } from "./toaster.js";
+
+declare global {
+  interface Window {
+    toast?: ToastFunction;
+  }
+}
 import STYLES from "./styles.css" with { type: "text" };
 
 // created once and shared across all instances via `adoptedStyleSheets`

@@ -1,11 +1,5 @@
-declare global {
-  interface Window {
-    toast?: ToastFunction;
-  }
-}
-
 import { SonnerToast, TIME_BEFORE_UNMOUNT } from "./toast.js";
-import type { ToastType, Position, SwipeDirection, Toast, ToastOptions, ToastAction, ToastData } from "./toast.js";
+import type { ToastType, Position, SwipeDirection, Toast, ToastOptions, ToastData } from "./toast.js";
 
 type Theme = "light" | "dark" | "system";
 
