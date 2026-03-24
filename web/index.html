@@ -441,7 +441,6 @@
       margin-top: var(--spacing-4);
       border-radius: var(--radius);
       border: 1px solid var(--gray3);
-      cursor: copy;
     }
 
     .code-wrapper pre {
@@ -453,6 +452,10 @@
       white-space: pre-wrap;
       color: var(--gray12);
       line-height: 0;
+    }
+
+    #installation .code-wrapper pre {
+      cursor: copy;
     }
 
     .code-wrapper + p {
@@ -489,7 +492,8 @@
     }
 
     .code-wrapper:hover .copy-btn,
-    .copy-btn.always-visible {
+    .copy-btn.always-visible,
+    .copy-btn:has(svg:last-child.active) {
       opacity: 1;
     }
 
@@ -507,36 +511,23 @@
       outline: none;
     }
 
-    .copy-btn .copy-icon,
-    .copy-btn .check-icon {
+    button.btn svg {
       grid-area: 1 / 1;
       display: block;
+      opacity: 0;
+      transform: scale(0.5);
       transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
+      transition-delay: 0ms;
     }
 
-    .copy-btn .copy-icon {
+    button.btn svg.active {
       opacity: 1;
       transform: scale(1);
       transition-delay: var(--duration-fast);
     }
 
-    .copy-btn .check-icon {
-      opacity: 0;
-      transform: scale(0.5);
-      transition-delay: 0ms;
-    }
-
-    .copy-btn.copied .copy-icon {
-      opacity: 0;
-      transform: scale(0.5);
-      transition-delay: 0ms;
-    }
-
-    .copy-btn.copied .check-icon {
-      opacity: 1;
-      transform: scale(1);
+    .copy-btn svg:last-child {
       color: #22c55e;
-      transition-delay: var(--duration-fast);
     }
 
     .bridge-card {
@@ -575,21 +566,6 @@
       background: var(--gray2);
       border-color: var(--gray5);
       color: var(--gray12);
-    }
-
-    .theme-toggle svg {
-      grid-area: 1 / 1;
-      display: block;
-      opacity: 0;
-      transform: scale(0.5);
-      transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
-      transition-delay: 0ms;
-    }
-
-    .theme-toggle svg.active {
-      opacity: 1;
-      transform: scale(1);
-      transition-delay: var(--duration-fast);
     }
 
     footer {
@@ -678,16 +654,16 @@
 &lt;/script&gt;
 &lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn always-visible" aria-label="Copy code" data-copy='<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component"></script>'>
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
         <p>Or install from npm:</p>
         <div class="code-wrapper">
           <pre><code>npm install sonner-web-component</code></pre>
           <button class="btn copy-btn always-visible" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -706,8 +682,8 @@
         <div class="code-wrapper">
           <pre><code id="types-code">toast('Event has been created')</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -725,8 +701,8 @@
   description: 'Monday, January 3rd at 6:00pm'
 })</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -745,8 +721,8 @@
         <div class="code-wrapper">
           <pre><code id="position-code">&lt;sonner-toaster position="bottom-right"&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -761,8 +737,8 @@
         <div class="code-wrapper">
           <pre><code id="expand-code">&lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -780,8 +756,8 @@
         <div class="code-wrapper">
           <pre><code id="visible-toasts-code">&lt;sonner-toaster visible-toasts="3"&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -799,8 +775,8 @@
         <div class="code-wrapper">
           <pre><code id="duration-code">&lt;sonner-toaster duration="4000"&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -817,8 +793,8 @@
         <div class="code-wrapper">
           <pre><code id="burst-code">&lt;sonner-toaster burst-window="500" burst-linger="3000"&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -835,8 +811,8 @@
         <div class="code-wrapper">
           <pre><code id="rich-colors-code">&lt;sonner-toaster rich-colors&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -851,8 +827,8 @@
         <div class="code-wrapper">
           <pre><code id="close-button-code">&lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -875,8 +851,8 @@
   `
 })</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -897,8 +873,8 @@
   }
 })</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -913,8 +889,8 @@
         <div class="code-wrapper">
           <pre><code id="invert-code">toast('Event has been created', { invert: true })</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -931,8 +907,8 @@
   onDismiss: (t) => toast.info(\`Toast #\${t.id} dismissed\`)
 })</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -953,8 +929,8 @@ toast.dismiss(id)
 // Dismiss all
 toast.dismiss()</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -975,8 +951,8 @@ toast.dismiss()</code></pre>
   Success
 &lt;/button&gt;</code></pre>
           <button class="btn copy-btn" aria-label="Copy code">
-            <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-            <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+            <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+            <svg width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
       </section>
@@ -997,8 +973,8 @@ toast.dismiss()</code></pre>
 &lt;!-- HX-Trigger: {"toast": {"level": "success", "message": "Saved!"}} --&gt;
 &lt;button hx-post="/save" hx-swap="none"&gt;Save&lt;/button&gt;</code></pre>
             <button class="btn copy-btn" aria-label="Copy code">
-              <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-              <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+              <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+              <svg width="14" height="14"><use href="#icon-check"/></svg>
             </button>
           </div>
         </div>
@@ -1015,8 +991,8 @@ toast.dismiss()</code></pre>
   Save
 &lt;/button&gt;</code></pre>
             <button class="btn copy-btn" aria-label="Copy code">
-              <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-              <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+              <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+              <svg width="14" height="14"><use href="#icon-check"/></svg>
             </button>
           </div>
         </div>
@@ -1035,8 +1011,8 @@ toast.dismiss()</code></pre>
   // X-Toasts header is read and rendered automatically
 &lt;/script&gt;</code></pre>
             <button class="btn copy-btn" aria-label="Copy code">
-              <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
-              <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
+              <svg class="active" width="14" height="14"><use href="#icon-copy"/></svg>
+              <svg width="14" height="14"><use href="#icon-check"/></svg>
             </button>
           </div>
         </div>
@@ -1058,7 +1034,7 @@ toast.dismiss()</code></pre>
 
     // Helpers
     function activate(container, btn) {
-      container.querySelectorAll('.button').forEach((b) => b.classList.remove('active'));
+      container.querySelectorAll('button').forEach((b) => b.classList.remove('active'));
       btn.classList.add('active');
     }
 
@@ -1400,29 +1376,34 @@ toast.dismiss()</code></pre>
     });
 
     // Copy to clipboard
-    document.querySelectorAll('.code-wrapper').forEach((outer) => {
-      const btn = outer.querySelector('.copy-btn');
-      if (!btn) return;
-
-      async function doCopy() {
-        const text = btn.dataset.copy
-          || outer.querySelector('code')?.textContent;
-        if (!text) return;
-        try {
-          await navigator.clipboard.writeText(text);
-          btn.classList.add('copied');
-          setTimeout(() => btn.classList.remove('copied'), 2000);
-        } catch {
-          // Clipboard API not available
-        }
+    async function copyToClipboard(btn) {
+      const icons = btn.querySelectorAll('svg');
+      const text = btn.dataset.copy
+        || btn.closest('.code-wrapper')?.querySelector('code')?.textContent;
+      if (!text) return;
+      try {
+        await navigator.clipboard.writeText(text);
+        icons[0].classList.remove('active');
+        icons[1].classList.add('active');
+        setTimeout(() => {
+          icons[1].classList.remove('active');
+          icons[0].classList.add('active');
+        }, 2000);
+      } catch {
+        // Clipboard API not available
       }
+    }
 
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        doCopy();
+    document.querySelectorAll('.copy-btn').forEach((btn) => {
+      btn.addEventListener('click', () => copyToClipboard(btn));
+    });
+
+    document.querySelectorAll('#installation .code-wrapper').forEach((wrapper) => {
+      wrapper.addEventListener('click', (e) => {
+        if (e.target.closest('.copy-btn')) return;
+        const btn = wrapper.querySelector('.copy-btn');
+        if (btn) copyToClipboard(btn);
       });
-
-      outer.addEventListener('click', () => doCopy());
     });
 
     // Theme toggle
