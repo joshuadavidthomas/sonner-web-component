@@ -789,14 +789,21 @@
 
       <section id="custom-html">
         <h2>Custom HTML</h2>
-        <p>Render arbitrary HTML inside a toast.</p>
+        <p>Render rich HTML inside a toast for structured content.</p>
         <div class="buttons">
-          <button class="button" id="html-demo-btn">HTML Toast</button>
+          <button class="button" id="html-event-btn">Event</button>
+          <button class="button" id="html-user-btn">User</button>
+          <button class="button" id="html-code-btn">Code</button>
         </div>
         <div class="code-outer">
           <div class="code-wrapper">
             <pre><code id="custom-html-code">toast('', {
-  html: '&lt;b&gt;Bold&lt;/b&gt; text with &lt;a href="#"&gt;a link&lt;/a&gt;'
+  html: `
+    &lt;div style="font-weight:600"&gt;📅 Team standup&lt;/div&gt;
+    &lt;div style="color:#888;font-size:12px"&gt;
+      Tomorrow at 9:00am · Conference Room B
+    &lt;/div&gt;
+  `
 })</code></pre>
           </div>
           <button class="copy-btn" aria-label="Copy code">
@@ -1183,10 +1190,39 @@ toast.dismiss()</code></pre>
     });
 
     // Custom HTML
-    document.getElementById('html-demo-btn').addEventListener('click', () => {
-      toast('', {
-        html: '<b>Bold</b> text with <a href="#" style="text-decoration:underline">a link</a>',
-      });
+    const customHtmlCode = document.getElementById('custom-html-code');
+    const htmlDemos = [
+      {
+        snippet: `toast('', {\n  html: \`\n    <div style="font-weight:600">📅 Team standup</div>\n    <div style="color:#888;font-size:12px">\n      Tomorrow at 9:00am · Conference Room B\n    </div>\n  \`\n})`,
+        action: () => toast('', {
+          html: '<div style="font-weight:600">📅 Team standup</div><div style="color:#888;font-size:12px">Tomorrow at 9:00am · Conference Room B</div>',
+        }),
+      },
+      {
+        snippet: `toast('', {\n  html: \`\n    <div style="display:flex;align-items:center;gap:10px">\n      <div style="width:32px;height:32px;border-radius:50%;background:#8b5cf6;display:grid;place-items:center;color:#fff;font-weight:600;flex-shrink:0">J</div>\n      <div>\n        <div style="font-weight:600">Jane Smith</div>\n        <div style="color:#888;font-size:12px">Joined your team</div>\n      </div>\n    </div>\n  \`\n})`,
+        action: () => toast('', {
+          html: '<div style="display:flex;align-items:center;gap:10px"><div style="width:32px;height:32px;border-radius:50%;background:#8b5cf6;display:grid;place-items:center;color:#fff;font-weight:600;flex-shrink:0">J</div><div><div style="font-weight:600">Jane Smith</div><div style="color:#888;font-size:12px">Joined your team</div></div></div>',
+        }),
+      },
+      {
+        snippet: `toast('', {\n  html: \`\n    <div style="font-weight:600;margin-bottom:4px">Deploy complete</div>\n    <code style="font-size:11px;padding:2px 5px;background:rgba(127,127,127,.15);border-radius:3px;font-family:monospace">\n      main@a1b2c3d → production\n    </code>\n  \`\n})`,
+        action: () => toast('', {
+          html: '<div style="font-weight:600;margin-bottom:4px">Deploy complete</div><code style="font-size:11px;padding:2px 5px;background:rgba(127,127,127,.15);border-radius:3px;font-family:monospace">main@a1b2c3d → production</code>',
+        }),
+      },
+    ];
+
+    document.getElementById('html-event-btn').addEventListener('click', () => {
+      htmlDemos[0].action();
+      customHtmlCode.textContent = htmlDemos[0].snippet;
+    });
+    document.getElementById('html-user-btn').addEventListener('click', () => {
+      htmlDemos[1].action();
+      customHtmlCode.textContent = htmlDemos[1].snippet;
+    });
+    document.getElementById('html-code-btn').addEventListener('click', () => {
+      htmlDemos[2].action();
+      customHtmlCode.textContent = htmlDemos[2].snippet;
     });
 
     // Cancel
