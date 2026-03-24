@@ -268,8 +268,6 @@ function toPublicToast(t: ToastState): Toast {
   };
 }
 
-
-
 export class SonnerToaster {
   #config: ToasterConfig = { ...DEFAULTS };
   #resolvedTheme: "light" | "dark" = "light";
@@ -280,13 +278,12 @@ export class SonnerToaster {
   #sectionEl: HTMLElement;
 
   constructor(root: ShadowRoot) {
-    const sectionEl = document.createElement("section");
-    sectionEl.setAttribute("tabindex", "-1");
-    sectionEl.setAttribute("aria-live", "polite");
-    sectionEl.setAttribute("aria-relevant", "additions text");
-    sectionEl.setAttribute("aria-atomic", "false");
-    root.appendChild(sectionEl);
-    this.#sectionEl = sectionEl;
+    this.#sectionEl = document.createElement("section");
+    this.#sectionEl.setAttribute("tabindex", "-1");
+    this.#sectionEl.setAttribute("aria-live", "polite");
+    this.#sectionEl.setAttribute("aria-relevant", "additions text");
+    this.#sectionEl.setAttribute("aria-atomic", "false");
+    root.appendChild(this.#sectionEl);
 
     for (const { name, value } of root.host.attributes) {
       this.applyAttribute(name, value);
