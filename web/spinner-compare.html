@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spinner Comparison</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      gap: 40px;
+      background: #fafafa;
+    }
+    .compare {
+      display: flex;
+      gap: 60px;
+      align-items: center;
+    }
+    .spinner-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .spinner-box label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    .preview {
+      width: 356px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: #333;
+    }
+    .icon-slot {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    button {
+      padding: 10px 24px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover { background: #f5f5f5; }
+    .buttons { display: flex; gap: 12px; }
+
+    /* Original div spinner */
+    .og-spinner-wrapper {
+      --size: 16px;
+      height: var(--size);
+      width: var(--size);
+      position: absolute;
+      inset: 0;
+    }
+    .og-spinner {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      height: var(--size);
+      width: var(--size);
+    }
+    .og-bar {
+      animation: og-spin 1.2s linear infinite;
+      background: hsl(0, 0%, 43.5%);
+      border-radius: 6px;
+      height: 8%;
+      left: -10%;
+      position: absolute;
+      top: -3.9%;
+      width: 24%;
+    }
+    @keyframes og-spin {
+      0% { opacity: 1; }
+      100% { opacity: 0.15; }
+    }
+
+    /* SVG spinner */
+    .svg-spinner {
+      animation: svg-spin 0.8s steps(12) infinite;
+      color: hsl(0, 0%, 43.5%);
+    }
+    @keyframes svg-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Dark mode previews */
+    .preview.dark {
+      background: #1c1c1c;
+      color: #e0e0e0;
+    }
+    .preview.dark .og-bar { background: hsl(0, 0%, 63%); }
+    .preview.dark .svg-spinner { color: hsl(0, 0%, 63%); }
+  </style>
+</head>
+<body>
+  <h2>Spinner Comparison</h2>
+
+  <div class="compare">
+    <div class="spinner-box">
+      <label>Original (12 divs)</label>
+      <div class="preview" id="og-light"></div>
+      <div class="preview dark" id="og-dark"></div>
+    </div>
+    <div class="spinner-box">
+      <label>SVG (stepped rotation)</label>
+      <div class="preview" id="svg-light"></div>
+      <div class="preview dark" id="svg-dark"></div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="fireToast('og')">Toast with original</button>
+    <button onclick="fireToast('svg')">Toast with SVG</button>
+  </div>
+
+  <sonner-toaster position="bottom-center"></sonner-toaster>
+  <script type="module" src="/dist/index.js"></script>
+
+  <script>
+    function createOgSpinner() {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'og-spinner-wrapper';
+      const spinner = document.createElement('div');
+      spinner.className = 'og-spinner';
+      for (let i = 0; i < 12; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'og-bar';
+        bar.style.animationDelay = `${-1.2 + i * 0.1}s`;
+        bar.style.transform = `rotate(${i * 30}deg) translate(146%)`;
+        spinner.appendChild(bar);
+      }
+      wrapper.appendChild(spinner);
+      return wrapper;
+    }
+
+    function createSvgSpinner() {
+      const ns = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(ns, 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.classList.add('svg-spinner');
+      for (let i = 0; i < 12; i++) {
+        const opacity = (1 - (i / 12) * 0.85).toFixed(2);
+        const line = document.createElementNS(ns, 'line');
+        line.setAttribute('x1', '12');
+        line.setAttribute('y1', '2');
+        line.setAttribute('x2', '12');
+        line.setAttribute('y2', '6.5');
+        line.setAttribute('stroke', 'currentColor');
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('stroke-linecap', 'round');
+        line.setAttribute('opacity', opacity);
+        line.setAttribute('transform', `rotate(${i * 30} 12 12)`);
+        svg.appendChild(line);
+      }
+      return svg;
+    }
+
+    // Static previews
+    for (const id of ['og-light', 'og-dark']) {
+      const el = document.getElementById(id);
+      const slot = document.createElement('div');
+      slot.className = 'icon-slot';
+      slot.appendChild(createOgSpinner());
+      el.appendChild(slot);
+      el.append('Loading...');
+    }
+    for (const id of ['svg-light', 'svg-dark']) {
+      const el = document.getElementById(id);
+      const slot = document.createElement('div');
+      slot.className = 'icon-slot';
+      slot.appendChild(createSvgSpinner());
+      el.appendChild(slot);
+      el.append('Loading...');
+    }
+
+    function fireToast(type) {
+      window.toast?.loading('Doing something...');
+    }
+  </script>
+</body>
+</html>
