@@ -32,10 +32,46 @@
       --gray11: hsl(0, 0%, 43.5%);
       --gray12: hsl(0, 0%, 9%);
       --hover: rgb(40, 40, 40);
-      --border-radius: 6px;
-      --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      --font-mono: 'SF Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-      --side-padding: 16px;
+
+      --spacing: 0.25rem;
+      --spacing-2: calc(var(--spacing) * 2);
+      --spacing-2\.5: calc(var(--spacing) * 2.5);
+      --spacing-3: calc(var(--spacing) * 3);
+      --spacing-4: calc(var(--spacing) * 4);
+      --spacing-5: calc(var(--spacing) * 5);
+      --spacing-6: calc(var(--spacing) * 6);
+      --spacing-8: calc(var(--spacing) * 8);
+      --spacing-10: calc(var(--spacing) * 10);
+      --spacing-12: calc(var(--spacing) * 12);
+      --spacing-16: calc(var(--spacing) * 16);
+      --spacing-24: calc(var(--spacing) * 24);
+      --spacing-32: calc(var(--spacing) * 32);
+      --spacing-40: calc(var(--spacing) * 40);
+
+      --container-xl: 36rem;
+      --container-2xl: 42rem;
+
+      --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-3xl: 2rem;
+      --text-5xl: 3rem;
+
+      --tracking-tight: -0.025em;
+
+      --leading-tight: 1.1;
+      --leading-normal: 1.5;
+      --leading-code: 1.4;
+
+      --radius: 0.375rem;
+      --radius-lg: 0.5rem;
+
+      --duration: 200ms;
+      --duration-fast: 150ms;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -74,43 +110,63 @@
       --hover: hsl(0, 0%, 80%);
     }
 
-    *, *::before, *::after { box-sizing: border-box; touch-action: manipulation; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      touch-action: manipulation;
+    }
 
-    ::selection { background: var(--gray7); }
+    ::selection {
+      background: var(--gray7);
+    }
+
+    .hidden {
+      display: none;
+    }
 
     body {
       margin: 0;
-      padding: 100px 0 0;
+      padding: var(--spacing-16) 0 0;
       font-family: var(--font-sans);
-      font-size: 16px;
-      line-height: 25px;
+      font-size: var(--text-base);
+      line-height: var(--leading-normal);
       color: var(--gray12);
       background: var(--gray0);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
-    .container {
-      max-width: 642px;
-      margin: 0 auto;
-      padding-left: max(var(--side-padding), env(safe-area-inset-left));
-      padding-right: max(var(--side-padding), env(safe-area-inset-right));
+    @media (width >= 40rem) {
+      body {
+        padding-top: var(--spacing-24);
+      }
     }
 
-    h1, h2, p { color: var(--gray12); }
-    h1 { margin: 0; }
+
+    h1,
+    h2,
+    p {
+      color: var(--gray12);
+    }
+
+    h1 {
+      margin: 0;
+    }
 
     h2 {
-      font-size: 16px;
+      font-size: var(--text-base);
       font-weight: 500;
-      margin: 12px 0;
+      margin: var(--spacing-3) 0;
     }
 
-    h2 + p { margin-top: -4px; }
+    h2 + p {
+      margin-top: calc(-1 * var(--spacing));
+    }
 
     p {
-      font-size: 16px;
-      margin: 0 0 16px;
+      font-size: var(--text-base);
+      margin: 0 0 var(--spacing-4);
     }
 
     a {
@@ -119,21 +175,82 @@
       text-underline-position: from-font;
     }
 
+    button {
+      padding: var(--spacing-2) var(--spacing-3);
+      margin: 0;
+      background: var(--gray1);
+      border: 1px solid var(--gray3);
+      white-space: nowrap;
+      border-radius: var(--radius);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      color: var(--gray12);
+      transition: border-color var(--duration), background var(--duration), box-shadow var(--duration);
+    }
+
+    button:hover {
+      background: var(--gray2);
+      border-color: var(--gray4);
+    }
+
+    button.active {
+      background: var(--gray3);
+      border-color: var(--gray7);
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow:
+        0px 0px 0px 1px rgba(0, 0, 0, 0.06),
+        0px 1px 0px 0px rgba(0, 0, 0, 0.08),
+        0px 2px 2px 0px rgba(0, 0, 0, 0.04),
+        0px 3px 3px 0px rgba(0, 0, 0, 0.02),
+        0px 4px 4px 0px rgba(0, 0, 0, 0.01),
+        0 0 0 2px rgba(0, 0, 0, 0.15);
+    }
+
+    button.btn {
+      border: 1px solid var(--gray4);
+      display: grid;
+      place-items: center;
+      padding: var(--spacing-2);
+      transition: background var(--duration), box-shadow var(--duration), opacity var(--duration);
+      color: var(--gray11);
+    }
+
+    button.btn:hover {
+      background: var(--gray2);
+      border-color: var(--gray5);
+      color: var(--gray12);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: var(--spacing-2);
+      flex-wrap: wrap;
+    }
+
     code {
-      font-size: 13px;
-      line-height: 28px;
-      padding: 2px 3.6px;
+      font-size: var(--text-sm);
+      padding: var(--spacing);
       border: 1px solid var(--gray3);
       background: var(--gray4);
       font-family: var(--font-mono);
-      border-radius: var(--border-radius);
+      border-radius: var(--radius);
     }
 
-    /* Hero */
+    .container {
+      max-width: var(--container-2xl);
+      margin: 0 auto;
+      padding: 0 var(--spacing-4);
+    }
+
     .hero {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: var(--spacing-3);
       align-items: center;
       text-align: center;
     }
@@ -142,20 +259,26 @@
       display: flex;
       flex-direction: column;
       margin: 0 auto;
-      height: 100px;
-      width: 600px;
+      height: var(--spacing-24);
+      width: 100%;
       position: relative;
       mask-image: linear-gradient(to top, transparent 0%, black 35%);
       -webkit-mask-image: linear-gradient(to top, transparent 0%, black 35%);
     }
 
+    @media (width >= 40rem) {
+      .toast-stack {
+        width: var(--container-xl);
+      }
+    }
+
     .mock-toast {
-      width: 575px;
-      height: 40px;
+      width: 100%;
+      height: var(--spacing-10);
       background: var(--gray0);
       box-shadow: 0 4px 12px #0000001a;
       border: 1px solid var(--gray3);
-      border-radius: var(--border-radius);
+      border-radius: var(--radius);
       position: absolute;
       bottom: 0;
       left: 50%;
@@ -171,33 +294,34 @@
     }
 
     .hero h1 {
-      font-size: 48px;
+      font-size: var(--text-3xl);
       font-weight: 700;
-      letter-spacing: -0.025em;
-      line-height: 1.1;
-      margin: -20px 0 0;
+      letter-spacing: var(--tracking-tight);
+      line-height: var(--leading-tight);
+      margin: calc(-1 * var(--spacing-5)) 0 0;
       z-index: 10;
     }
 
+    @media (width >= 40rem) {
+      .hero h1 {
+        font-size: var(--text-5xl);
+      }
+    }
+
     .hero p {
-      font-size: 17px;
-      margin-top: 0;
-      margin-bottom: 12px;
+      font-size: var(--text-lg);
     }
 
     .hero-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
       justify-content: center;
     }
 
     .hero-btn {
-      height: 40px;
-      border-radius: var(--border-radius);
+      height: var(--spacing-10);
+      border-radius: var(--radius);
       border: none;
       background: linear-gradient(156deg, rgba(255, 255, 255, 1) 0%, rgba(240, 240, 240, 1) 100%);
-      padding: 0 30px;
+      padding: 0 var(--spacing-8);
       font-weight: 600;
       flex-shrink: 0;
       font-family: inherit;
@@ -209,15 +333,14 @@
         0px 4px 4px 0px rgba(0, 0, 0, 0.01);
       position: relative;
       overflow: hidden;
-      cursor: pointer;
       text-decoration: none;
-      color: hsl(0, 0%, 9%);
-      font-size: 13px;
+      color: var(--gray12);
+      font-size: var(--text-sm);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: box-shadow 200ms, background 200ms;
+      gap: var(--spacing-2);
+      transition: box-shadow var(--duration), background var(--duration);
     }
 
     .hero-btn[data-primary] {
@@ -268,7 +391,7 @@
         hsla(0, 0%, 91%, 0) 100%
       );
       opacity: 0.6;
-      transition: transform 200ms;
+      transition: transform var(--duration);
     }
 
     .hero-btn:hover:not([data-primary]):after {
@@ -287,7 +410,9 @@
       :root:not([data-theme="light"]) .hero-btn:not([data-primary]):hover {
         background: var(--gray3);
       }
-      :root:not([data-theme="light"]) .hero-btn:after { display: none; }
+      :root:not([data-theme="light"]) .hero-btn:after {
+        display: none;
+      }
     }
 
     :root[data-theme="dark"] .hero-btn:not([data-primary]) {
@@ -303,97 +428,41 @@
     }
     :root[data-theme="dark"] .hero-btn:after { display: none; }
 
-    /* Content sections */
     .content {
       display: flex;
       flex-direction: column;
-      gap: 48px;
-      margin-top: 96px;
-    }
-
-    /* Section buttons */
-    .buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      overflow: auto;
-      margin: 0 calc(-1 * var(--side-padding));
-      padding: 4px var(--side-padding);
-    }
-
-    .button {
-      padding: 8px 12px;
-      margin: 0;
-      background: var(--gray1);
-      border: 1px solid var(--gray3);
-      white-space: nowrap;
-      border-radius: var(--border-radius);
-      font-size: 13px;
-      font-weight: 500;
-      font-family: var(--font-sans);
-      cursor: pointer;
-      color: var(--gray12);
-      transition: border-color 200ms, background 200ms, box-shadow 200ms;
-    }
-
-    .button:hover {
-      background: var(--gray2);
-      border-color: var(--gray4);
-    }
-
-    .button.active {
-      background: var(--gray3);
-      border-color: var(--gray7);
-    }
-
-    .button:focus-visible {
-      outline: none;
-      box-shadow:
-        0px 0px 0px 1px rgba(0, 0, 0, 0.06),
-        0px 1px 0px 0px rgba(0, 0, 0, 0.08),
-        0px 2px 2px 0px rgba(0, 0, 0, 0.04),
-        0px 3px 3px 0px rgba(0, 0, 0, 0.02),
-        0px 4px 4px 0px rgba(0, 0, 0, 0.01),
-        0 0 0 2px rgba(0, 0, 0, 0.15);
-    }
-
-    @media (max-width: 600px) {
-      .buttons {
-        mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
-        -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
-      }
-    }
-
-
-
-    /* Code blocks */
-    .code-outer {
-      position: relative;
-      margin-top: 16px;
-      cursor: copy;
+      gap: var(--spacing-12);
+      margin-top: var(--spacing-24);
     }
 
     .code-wrapper {
+      position: relative;
       overflow: hidden;
-      border-radius: var(--border-radius);
+      margin-top: var(--spacing-4);
+      border-radius: var(--radius);
       border: 1px solid var(--gray3);
+      cursor: copy;
     }
 
     .code-wrapper pre {
-      padding: 16px;
+      padding: var(--spacing-4);
       margin: 0;
-      background: linear-gradient(to top, var(--gray2), var(--gray1) 16px);
+      background: linear-gradient(to top, var(--gray2), var(--gray1) var(--spacing-4));
       font-family: var(--font-mono);
-      font-size: 12px;
-      line-height: 17px;
+      font-size: var(--text-xs);
       white-space: pre-wrap;
       color: var(--gray12);
+      line-height: 0;
+    }
+
+    .code-wrapper + p {
+      margin-top: var(--spacing-4);
     }
 
     .code-wrapper code {
       font-family: inherit;
       font-size: inherit;
-      line-height: inherit;
+      line-height: var(--leading-code);
       padding: 0;
       border: none;
       background: none;
@@ -402,38 +471,53 @@
 
     .copy-btn {
       position: absolute;
-      top: 12px;
-      right: 12px;
+      inset-block: 0;
+      right: var(--spacing-4);
       z-index: 1;
-      width: 26px;
-      height: 26px;
-      border: 1px solid var(--gray4);
-      border-radius: var(--border-radius);
-      display: grid;
-      place-items: center;
-      padding: 0;
       background: var(--gray0);
-      cursor: pointer;
-      opacity: 0;
-      color: var(--gray12);
-      transition: background 200ms, box-shadow 200ms, opacity 200ms;
+      opacity: 1;
+      cursor: copy;
+      height: min-content;
+      margin-top: var(--spacing-2);
+      margin-bottom: auto;
     }
 
-    .code-outer:hover .copy-btn,
-    .copy-btn.always-visible { opacity: 1; }
-    .copy-btn:hover { background: var(--gray1); }
-    .copy-btn:focus-visible { opacity: 1; box-shadow: 0 0 0 1px var(--gray4); outline: none; }
+    @media (width >= 40rem) {
+      .copy-btn {
+        opacity: 0;
+      }
+    }
+
+    .code-wrapper:hover .copy-btn,
+    .copy-btn.always-visible {
+      opacity: 1;
+    }
+
+    .copy-btn:hover {
+      background: var(--gray1);
+    }
+
+    .code-wrapper:hover .copy-btn {
+      color: var(--gray12);
+    }
+
+    .copy-btn:focus-visible {
+      opacity: 1;
+      box-shadow: 0 0 0 1px var(--gray6);
+      outline: none;
+    }
+
     .copy-btn .copy-icon,
     .copy-btn .check-icon {
       grid-area: 1 / 1;
       display: block;
-      transition: opacity 150ms ease, transform 150ms ease;
+      transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
     }
 
     .copy-btn .copy-icon {
       opacity: 1;
       transform: scale(1);
-      transition-delay: 150ms;
+      transition-delay: var(--duration-fast);
     }
 
     .copy-btn .check-icon {
@@ -452,51 +536,39 @@
       opacity: 1;
       transform: scale(1);
       color: #22c55e;
-      transition-delay: 150ms;
+      transition-delay: var(--duration-fast);
     }
 
-    /* Bridge cards */
     .bridge-card {
       border: 1px solid var(--gray3);
-      border-radius: 8px;
-      padding: 20px;
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-5);
     }
 
-    .bridge-card + .bridge-card { margin-top: 12px; }
+    .bridge-card + .bridge-card {
+      margin-top: var(--spacing-3);
+    }
 
     .bridge-card h3 {
-      font-size: 15px;
+      font-size: var(--text-base);
       font-weight: 600;
-      margin: 0 0 4px;
+      margin: 0 0 var(--spacing-1);
       color: var(--gray12);
     }
 
     .bridge-card .bridge-desc {
       color: var(--gray11);
-      font-size: 14px;
-      margin-bottom: 16px;
+      font-size: var(--text-sm);
+      margin-bottom: var(--spacing-4);
     }
 
-    .bridge-card .code-wrapper { margin-top: 0; }
-    .bridge-card .copy-btn { top: 12px; }
-
-    /* Theme toggle */
     .theme-toggle {
       position: fixed;
-      bottom: 16px;
-      left: 16px;
+      bottom: var(--spacing-4);
+      left: var(--spacing-4);
       z-index: 100;
-      width: 32px;
-      height: 32px;
-      border: 1px solid var(--gray4);
-      border-radius: var(--border-radius);
-      display: grid;
-      place-items: center;
-      padding: 0;
       background: var(--gray1);
-      cursor: pointer;
       color: var(--gray11);
-      transition: background 200ms, border-color 200ms, color 200ms;
     }
 
     .theme-toggle:hover {
@@ -510,68 +582,68 @@
       display: block;
       opacity: 0;
       transform: scale(0.5);
-      transition: opacity 150ms ease, transform 150ms ease;
+      transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
       transition-delay: 0ms;
     }
 
     .theme-toggle svg.active {
       opacity: 1;
       transform: scale(1);
-      transition-delay: 150ms;
+      transition-delay: var(--duration-fast);
     }
 
-    /* Footer */
     footer {
       background: var(--gray1);
       border-top: 1px solid var(--gray3);
-      margin-top: 164px;
+      margin-top: var(--spacing-32);
+    }
+
+    @media (width >= 40rem) {
+      footer {
+        margin-top: var(--spacing-40);
+      }
     }
 
     footer .container {
-      padding-top: 32px;
-      padding-bottom: 32px;
+      padding-top: var(--spacing-4);
+      padding-bottom: var(--spacing-4);
+    }
+
+    @media (width >= 40rem) {
+      footer .container {
+        padding-top: var(--spacing-8);
+        padding-bottom: var(--spacing-8);
+      }
     }
 
     footer p {
       margin: 0;
-      font-size: 14px;
+      font-size: var(--text-sm);
     }
 
-    footer p + p { margin-top: 4px; }
+    footer p + p {
+      margin-top: var(--spacing);
+    }
 
     footer a {
       font-weight: 600;
       text-decoration: none;
     }
 
-    footer a:hover { text-decoration: underline; }
-
-    /* Mobile */
-    @media (max-width: 600px) {
-      body { padding-top: 64px; }
-
-      .hero h1 { font-size: 32px; }
-
-      .toast-stack { width: 100%; }
-
-      .code-wrapper pre { font-size: 11px; }
-
-      .copy-btn { opacity: 1; }
-
-      footer { margin-top: 128px; }
-      footer .container { padding-top: 16px; padding-bottom: 16px; }
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <svg style="display:none">
+  <svg class="hidden">
     <symbol id="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
     <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
   </svg>
 
   <sonner-toaster position="bottom-right" theme="system"></sonner-toaster>
 
-  <button class="theme-toggle" aria-label="Toggle theme">
+  <button class="btn theme-toggle" aria-label="Toggle theme">
     <svg data-theme-icon="system" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
     <svg data-theme-icon="light" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     <svg data-theme-icon="dark" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -586,7 +658,7 @@
       </div>
       <h1>Sonner Web Component</h1>
       <p>An opinionated toast component for everything else.</p>
-      <div class="hero-actions">
+      <div class="btn-group hero-actions">
         <button id="hero-toast" class="hero-btn" data-primary>Render a toast</button>
         <a href="https://github.com/joshuadavidthomas/sonner-web-component" class="hero-btn" target="_blank" rel="noopener">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
@@ -599,24 +671,21 @@
       <section id="installation">
         <h2>Start using</h2>
         <p>Add to your HTML — no build step required.</p>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code>&lt;script type="module"
+        <div class="code-wrapper">
+          <pre><code>&lt;script
+  type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component"&gt;
 &lt;/script&gt;
 &lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn always-visible" aria-label="Copy code" data-copy='<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component"></script>'>
+          <button class="btn copy-btn always-visible" aria-label="Copy code" data-copy='<script type="module" src="https://cdn.jsdelivr.net/npm/sonner-web-component"></script>'>
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
         </div>
-        <p style="margin-top: 16px;">Or install from npm:</p>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code>npm install sonner-web-component</code></pre>
-          </div>
-          <button class="copy-btn always-visible" aria-label="Copy code">
+        <p>Or install from npm:</p>
+        <div class="code-wrapper">
+          <pre><code>npm install sonner-web-component</code></pre>
+          <button class="btn copy-btn always-visible" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -625,20 +694,18 @@
 
       <section id="types">
         <h2>Types</h2>
-        <div class="buttons" id="types-buttons">
-          <button class="button active" data-type="0">Default</button>
-          <button class="button" data-type="1">Success</button>
-          <button class="button" data-type="2">Info</button>
-          <button class="button" data-type="3">Warning</button>
-          <button class="button" data-type="4">Error</button>
-          <button class="button" data-type="5">Loading</button>
-          <button class="button" data-type="6">Promise</button>
+        <div class="btn-group" id="types-buttons">
+          <button class="active" data-type="0">Default</button>
+          <button data-type="1">Success</button>
+          <button data-type="2">Info</button>
+          <button data-type="3">Warning</button>
+          <button data-type="4">Error</button>
+          <button data-type="5">Loading</button>
+          <button data-type="6">Promise</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="types-code">toast('Event has been created')</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="types-code">toast('Event has been created')</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -648,18 +715,16 @@
       <section id="description">
         <h2>Description</h2>
         <p>Add a description to any toast type.</p>
-        <div class="buttons" id="description-buttons">
-          <button class="button active" data-desc="default">Default</button>
-          <button class="button" data-desc="success">Success</button>
-          <button class="button" data-desc="error">Error</button>
+        <div class="btn-group" id="description-buttons">
+          <button class="active" data-desc="default">Default</button>
+          <button data-desc="success">Success</button>
+          <button data-desc="error">Error</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="description-code">toast('Event has been created', {
+        <div class="code-wrapper">
+          <pre><code id="description-code">toast('Event has been created', {
   description: 'Monday, January 3rd at 6:00pm'
 })</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -669,19 +734,17 @@
       <section id="position">
         <h2>Position</h2>
         <p>Swipe direction changes depending on the position.</p>
-        <div class="buttons" id="position-buttons">
-          <button class="button" data-position="top-left">top-left</button>
-          <button class="button" data-position="top-center">top-center</button>
-          <button class="button" data-position="top-right">top-right</button>
-          <button class="button" data-position="bottom-left">bottom-left</button>
-          <button class="button" data-position="bottom-center">bottom-center</button>
-          <button class="button active" data-position="bottom-right">bottom-right</button>
+        <div class="btn-group" id="position-buttons">
+          <button data-position="top-left">top-left</button>
+          <button data-position="top-center">top-center</button>
+          <button data-position="top-right">top-right</button>
+          <button data-position="bottom-left">bottom-left</button>
+          <button data-position="bottom-center">bottom-center</button>
+          <button class="active" data-position="bottom-right">bottom-right</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="position-code">&lt;sonner-toaster position="bottom-right"&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="position-code">&lt;sonner-toaster position="bottom-right"&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -691,15 +754,13 @@
       <section id="expand">
         <h2>Expand</h2>
         <p>Toasts can also be expanded by default.</p>
-        <div class="buttons" id="expand-buttons">
-          <button class="button active" data-expand="false">Default</button>
-          <button class="button" data-expand="true">Expanded</button>
+        <div class="btn-group" id="expand-buttons">
+          <button class="active" data-expand="false">Default</button>
+          <button data-expand="true">Expanded</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="expand-code">&lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="expand-code">&lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -709,18 +770,16 @@
       <section id="visible-toasts">
         <h2>Visible Toasts</h2>
         <p>Control how many toasts are visible at once.</p>
-        <div class="buttons" id="visible-toasts-buttons">
-          <button class="button" data-visible="1">1</button>
-          <button class="button" data-visible="2">2</button>
-          <button class="button active" data-visible="3">3</button>
-          <button class="button" data-visible="5">5</button>
-          <button class="button" data-visible="8">8</button>
+        <div class="btn-group" id="visible-toasts-buttons">
+          <button data-visible="1">1</button>
+          <button data-visible="2">2</button>
+          <button class="active" data-visible="3">3</button>
+          <button data-visible="5">5</button>
+          <button data-visible="8">8</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="visible-toasts-code">&lt;sonner-toaster visible-toasts="3"&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="visible-toasts-code">&lt;sonner-toaster visible-toasts="3"&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -730,18 +789,16 @@
       <section id="duration">
         <h2>Duration</h2>
         <p>Set how long toasts stay visible, in milliseconds.</p>
-        <div class="buttons" id="duration-buttons">
-          <button class="button" data-duration="1000">1000</button>
-          <button class="button" data-duration="2000">2000</button>
-          <button class="button active" data-duration="4000">4000</button>
-          <button class="button" data-duration="8000">8000</button>
-          <button class="button" data-duration="Infinity">∞</button>
+        <div class="btn-group" id="duration-buttons">
+          <button data-duration="1000">1000</button>
+          <button data-duration="2000">2000</button>
+          <button class="active" data-duration="4000">4000</button>
+          <button data-duration="8000">8000</button>
+          <button data-duration="Infinity">∞</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="duration-code">&lt;sonner-toaster duration="4000"&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="duration-code">&lt;sonner-toaster duration="4000"&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -751,17 +808,15 @@
       <section id="burst">
         <h2>Burst</h2>
         <p>When multiple toasts arrive within the burst window, the stack auto-expands so all messages are visible, then collapses after the linger period. This is unique to Sonner Web Component.</p>
-        <div class="buttons" id="burst-buttons">
-          <button class="button active" data-burst="500,3000">Default</button>
-          <button class="button" data-burst="200,1500">Fast</button>
-          <button class="button" data-burst="1000,5000">Slow</button>
-          <button class="button" data-burst="0,0">Disabled</button>
+        <div class="btn-group" id="burst-buttons">
+          <button class="active" data-burst="500,3000">Default</button>
+          <button data-burst="200,1500">Fast</button>
+          <button data-burst="1000,5000">Slow</button>
+          <button data-burst="0,0">Disabled</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="burst-code">&lt;sonner-toaster burst-window="500" burst-linger="3000"&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="burst-code">&lt;sonner-toaster burst-window="500" burst-linger="3000"&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -771,17 +826,15 @@
       <section id="rich-colors">
         <h2>Rich Colors</h2>
         <p>Colored backgrounds for different toast types.</p>
-        <div class="buttons" id="rich-colors-buttons">
-          <button class="button" data-rich="success">Success</button>
-          <button class="button" data-rich="error">Error</button>
-          <button class="button" data-rich="info">Info</button>
-          <button class="button" data-rich="warning">Warning</button>
+        <div class="btn-group" id="rich-colors-buttons">
+          <button data-rich="success">Success</button>
+          <button data-rich="error">Error</button>
+          <button data-rich="info">Info</button>
+          <button data-rich="warning">Warning</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="rich-colors-code">&lt;sonner-toaster rich-colors&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="rich-colors-code">&lt;sonner-toaster rich-colors&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -791,15 +844,13 @@
       <section id="close-button">
         <h2>Close Button</h2>
         <p>Add a close button to all toasts.</p>
-        <div class="buttons" id="close-button-buttons">
-          <button class="button" data-close="false">Default</button>
-          <button class="button" data-close="true">Enabled</button>
+        <div class="btn-group" id="close-button-buttons">
+          <button data-close="false">Default</button>
+          <button data-close="true">Enabled</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="close-button-code">&lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="close-button-code">&lt;sonner-toaster&gt;&lt;/sonner-toaster&gt;</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -809,14 +860,13 @@
       <section id="custom-html">
         <h2>Custom HTML</h2>
         <p>Render rich HTML inside a toast for structured content.</p>
-        <div class="buttons">
-          <button class="button" id="html-event-btn">Event</button>
-          <button class="button" id="html-user-btn">User</button>
-          <button class="button" id="html-code-btn">Code</button>
+        <div class="btn-group">
+          <button id="html-event-btn">Event</button>
+          <button id="html-user-btn">User</button>
+          <button id="html-code-btn">Code</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="custom-html-code">toast('', {
+        <div class="code-wrapper">
+          <pre><code id="custom-html-code">toast('', {
   html: `
     &lt;div style="font-weight:600"&gt;📅 Team standup&lt;/div&gt;
     &lt;div style="color:#888;font-size:12px"&gt;
@@ -824,8 +874,7 @@
     &lt;/div&gt;
   `
 })</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -835,21 +884,19 @@
       <section id="action-cancel">
         <h2>Action &amp; Cancel</h2>
         <p>Add action and cancel buttons to any toast.</p>
-        <div class="buttons" id="action-cancel-buttons">
-          <button class="button active" data-ac="action">Action</button>
-          <button class="button" data-ac="cancel">Cancel</button>
-          <button class="button" data-ac="both">Both</button>
+        <div class="btn-group" id="action-cancel-buttons">
+          <button class="active" data-ac="action">Action</button>
+          <button data-ac="cancel">Cancel</button>
+          <button data-ac="both">Both</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="action-cancel-code">toast('Event has been created', {
+        <div class="code-wrapper">
+          <pre><code id="action-cancel-code">toast('Event has been created', {
   action: {
     label: 'Undo',
     onClick: () => console.log('Undo')
   }
 })</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -859,15 +906,13 @@
       <section id="invert">
         <h2>Invert</h2>
         <p>Dark toast on a light background, or light on dark.</p>
-        <div class="buttons" id="invert-buttons">
-          <button class="button" data-invert="toast">Per Toast</button>
-          <button class="button" data-invert="global">Global</button>
+        <div class="btn-group" id="invert-buttons">
+          <button data-invert="toast">Per Toast</button>
+          <button data-invert="global">Global</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="invert-code">toast('Event has been created', { invert: true })</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+        <div class="code-wrapper">
+          <pre><code id="invert-code">toast('Event has been created', { invert: true })</code></pre>
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -877,17 +922,15 @@
       <section id="callbacks">
         <h2>Callbacks</h2>
         <p>Run code when a toast is dismissed or auto-closes.</p>
-        <div class="buttons">
-          <button class="button" id="on-dismiss-btn">onDismiss</button>
-          <button class="button" id="on-autoclose-btn">onAutoClose</button>
+        <div class="btn-group">
+          <button id="on-dismiss-btn">onDismiss</button>
+          <button id="on-autoclose-btn">onAutoClose</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code id="callbacks-code">toast('Swipe me away', {
+        <div class="code-wrapper">
+          <pre><code id="callbacks-code">toast('Swipe me away', {
   onDismiss: (t) => toast.info(\`Toast #\${t.id} dismissed\`)
 })</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -897,21 +940,19 @@
       <section id="dismiss">
         <h2>Dismiss</h2>
         <p>Programmatically dismiss toasts by ID or all at once.</p>
-        <div class="buttons">
-          <button class="button" id="dismiss-one-btn">Create &amp; Dismiss</button>
-          <button class="button" id="dismiss-all-btn">Dismiss All</button>
+        <div class="btn-group">
+          <button id="dismiss-one-btn">Create &amp; Dismiss</button>
+          <button id="dismiss-all-btn">Dismiss All</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code>const id = toast('Event has been created')
+        <div class="code-wrapper">
+          <pre><code>const id = toast('Event has been created')
 
 // Dismiss by ID
 toast.dismiss(id)
 
 // Dismiss all
 toast.dismiss()</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -921,21 +962,19 @@ toast.dismiss()</code></pre>
       <section id="declarative">
         <h2>Declarative</h2>
         <p>Trigger toasts from HTML attributes — no JavaScript required.</p>
-        <div class="buttons">
-          <button class="button" data-toast-success="Event has been created" data-toast-description="Monday, January 3rd at 6:00pm">Success</button>
-          <button class="button" data-toast-info="Be at the area 10 minutes before the event time">Info</button>
-          <button class="button" data-toast-warning="Event start time is past due">Warning</button>
-          <button class="button" data-toast-error="Event has not been created">Error</button>
+        <div class="btn-group">
+          <button data-toast-success="Event has been created" data-toast-description="Monday, January 3rd at 6:00pm">Success</button>
+          <button data-toast-info="Be at the area 10 minutes before the event time">Info</button>
+          <button data-toast-warning="Event start time is past due">Warning</button>
+          <button data-toast-error="Event has not been created">Error</button>
         </div>
-        <div class="code-outer">
-          <div class="code-wrapper">
-            <pre><code>&lt;button
+        <div class="code-wrapper">
+          <pre><code>&lt;button
   data-toast-success="Event has been created"
   data-toast-description="Monday, January 3rd at 6:00pm"&gt;
   Success
 &lt;/button&gt;</code></pre>
-          </div>
-          <button class="copy-btn" aria-label="Copy code">
+          <button class="btn copy-btn" aria-label="Copy code">
             <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
             <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
           </button>
@@ -949,17 +988,15 @@ toast.dismiss()</code></pre>
         <div class="bridge-card">
           <h3>htmx</h3>
           <p class="bridge-desc">Trigger toasts from <code>HX-Trigger</code> response headers.</p>
-          <div class="code-outer">
-            <div class="code-wrapper">
-              <pre><code>&lt;script type="module"
+          <div class="code-wrapper">
+            <pre><code>&lt;script type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component/dist/bridges/htmx.js"&gt;
 &lt;/script&gt;
 
 &lt;!-- Server responds with: --&gt;
 &lt;!-- HX-Trigger: {"toast": {"level": "success", "message": "Saved!"}} --&gt;
 &lt;button hx-post="/save" hx-swap="none"&gt;Save&lt;/button&gt;</code></pre>
-            </div>
-            <button class="copy-btn" aria-label="Copy code">
+            <button class="btn copy-btn" aria-label="Copy code">
               <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
               <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
             </button>
@@ -969,17 +1006,15 @@ toast.dismiss()</code></pre>
         <div class="bridge-card">
           <h3>Alpine.js</h3>
           <p class="bridge-desc">Use <code>$toast</code> magic in Alpine expressions.</p>
-          <div class="code-outer">
-            <div class="code-wrapper">
-              <pre><code>&lt;script type="module"
+          <div class="code-wrapper">
+            <pre><code>&lt;script type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component/dist/bridges/alpine.js"&gt;
 &lt;/script&gt;
 
 &lt;button x-data @click="$toast.success('Saved!')"&gt;
   Save
 &lt;/button&gt;</code></pre>
-            </div>
-            <button class="copy-btn" aria-label="Copy code">
+            <button class="btn copy-btn" aria-label="Copy code">
               <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
               <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
             </button>
@@ -989,9 +1024,8 @@ toast.dismiss()</code></pre>
         <div class="bridge-card">
           <h3>fetch</h3>
           <p class="bridge-desc">Automatically reads <code>X-Toasts</code> header from fetch responses.</p>
-          <div class="code-outer">
-            <div class="code-wrapper">
-              <pre><code>&lt;script type="module"
+          <div class="code-wrapper">
+            <pre><code>&lt;script type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component/dist/bridges/fetch.js"&gt;
 &lt;/script&gt;
 
@@ -1000,8 +1034,7 @@ toast.dismiss()</code></pre>
   fetch('/api/save', { method: 'POST' })
   // X-Toasts header is read and rendered automatically
 &lt;/script&gt;</code></pre>
-            </div>
-            <button class="copy-btn" aria-label="Copy code">
+            <button class="btn copy-btn" aria-label="Copy code">
               <svg class="copy-icon" width="14" height="14"><use href="#icon-copy"/></svg>
               <svg class="check-icon" width="14" height="14"><use href="#icon-check"/></svg>
             </button>
@@ -1367,7 +1400,7 @@ toast.dismiss()</code></pre>
     });
 
     // Copy to clipboard
-    document.querySelectorAll('.code-outer').forEach((outer) => {
+    document.querySelectorAll('.code-wrapper').forEach((outer) => {
       const btn = outer.querySelector('.copy-btn');
       if (!btn) return;
 
