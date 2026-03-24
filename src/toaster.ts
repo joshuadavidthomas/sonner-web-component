@@ -384,7 +384,7 @@ export class SonnerToaster {
   }
 
   getToasts(): Toast[] {
-    return this.#toasts.map((t) => t.toPublic());
+    return [...this.#toasts];
   }
 
   add(level: ToastType, message: string | ToastOptions, options?: ToastOptions): number {

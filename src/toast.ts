@@ -22,21 +22,13 @@ export interface Toast {
   cancel: ToastAction | null;
 }
 
-export interface ToastOptions {
-  id?: number;
-  description?: string;
-  duration?: number;
-  dismissible?: boolean;
+export interface ToastOptions extends Partial<Omit<Toast, "type" | "promise">> {
   richColors?: boolean;
   closeButton?: boolean;
   position?: Position;
-  html?: string;
-  action?: ToastAction;
-  cancel?: ToastAction;
   invert?: boolean;
   onDismiss?: (toast: Toast) => void;
   onAutoClose?: (toast: Toast) => void;
-  title?: string;
   message?: string;
 }
 
@@ -64,43 +56,66 @@ const ICONS: Record<string, string> = {
 const CLOSE_ICON: string =
   '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
-const LOADER_HTML: string = (() => {
-  let bars = "";
+function createLoader(): HTMLDivElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "sonner-loading-wrapper";
+  const spinner = document.createElement("div");
+  spinner.className = "sonner-spinner";
   for (let i = 0; i < 12; i++) {
-    bars += `<div class="sonner-loading-bar" style="animation-delay:${-1.2 + i * 0.1}s;transform:rotate(${i * 30}deg) translate(146%)"></div>`;
+    const bar = document.createElement("div");
+    bar.className = "sonner-loading-bar";
+    bar.style.animationDelay = `${-1.2 + i * 0.1}s`;
+    bar.style.transform = `rotate(${i * 30}deg) translate(146%)`;
+    spinner.appendChild(bar);
   }
-  return `<div class="sonner-loading-wrapper"><div class="sonner-spinner">${bars}</div></div>`;
-})();
-
-function escapeHtml(str: string): string {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
+  wrapper.appendChild(spinner);
+  return wrapper;
 }
 
-export interface SonnerToastInit {
-  id: number;
+const SPINNER_BARS = 12;
+const SPINNER_OPACITIES = Array.from({ length: SPINNER_BARS }, (_, i) =>
+  (1 - (i / SPINNER_BARS) * 0.85).toFixed(2),
+);
+
+function createSvgLoader(): HTMLDivElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "sonner-loading-wrapper";
+  const ns = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("width", "16");
+  svg.setAttribute("height", "16");
+  svg.classList.add("sonner-svg-spinner");
+  for (let i = 0; i < SPINNER_BARS; i++) {
+    const line = document.createElementNS(ns, "line");
+    line.setAttribute("x1", "12");
+    line.setAttribute("y1", "2");
+    line.setAttribute("x2", "12");
+    line.setAttribute("y2", "6.5");
+    line.setAttribute("stroke", "currentColor");
+    line.setAttribute("stroke-width", "2");
+    line.setAttribute("stroke-linecap", "round");
+    line.setAttribute("opacity", SPINNER_OPACITIES[i]);
+    line.setAttribute("transform", `rotate(${i * 30} 12 12)`);
+    svg.appendChild(line);
+  }
+  wrapper.appendChild(svg);
+  return wrapper;
+}
+
+export interface SonnerToastInit extends Toast {
   groupKey: string;
-  type: ToastType;
-  title: string;
-  description: string;
-  html: string;
-  duration: number;
-  dismissible: boolean;
   richColors: boolean;
   closeButton: boolean;
   expand: boolean;
   invert: boolean;
-  action: ToastAction | null;
-  cancel: ToastAction | null;
-  promise: boolean | null;
   onDismiss: ((toast: Toast) => void) | null;
   onAutoClose: ((toast: Toast) => void) | null;
   onRemove: (id: number) => void;
   getAllowedSwipeDirections: () => string[];
 }
 
-export class SonnerToast {
+export class SonnerToast implements Toast {
   readonly id: number;
   readonly el: HTMLLIElement;
   readonly groupKey: string;
@@ -111,19 +126,24 @@ export class SonnerToast {
   html: string;
   duration: number;
   dismissible: boolean;
+  promise: boolean | null;
+  action: ToastAction | null;
+  cancel: ToastAction | null;
   initialHeight: number = 0;
   offsetBeforeRemove: number = 0;
 
   #remainingTime: number;
   #closeTimerStart: number = 0;
   #timeout: ReturnType<typeof setTimeout> | null = null;
-  #promise: boolean | null;
   #onDismiss: ((toast: Toast) => void) | null;
   #onAutoClose: ((toast: Toast) => void) | null;
   #onRemove: (id: number) => void;
   #getAllowedSwipeDirections: () => string[];
-  #action: ToastAction | null;
-  #cancel: ToastAction | null;
+
+  #iconEl: HTMLDivElement | null = null;
+  #titleEl: HTMLDivElement | null = null;
+  #descEl: HTMLDivElement | null = null;
+  #contentEl: HTMLDivElement | null = null;
 
   constructor(init: SonnerToastInit) {
     this.id = init.id;
@@ -134,41 +154,55 @@ export class SonnerToast {
     this.html = init.html;
     this.duration = init.duration;
     this.dismissible = init.dismissible;
+    this.promise = init.promise;
+    this.action = init.action;
+    this.cancel = init.cancel;
     this.#remainingTime = init.duration;
-    this.#promise = init.promise;
     this.#onDismiss = init.onDismiss;
     this.#onAutoClose = init.onAutoClose;
     this.#onRemove = init.onRemove;
     this.#getAllowedSwipeDirections = init.getAllowedSwipeDirections;
-    this.#action = init.action;
-    this.#cancel = init.cancel;
 
-    this.el = this.#buildElement(init);
-    this.#attachEventHandlers(init);
+    this.el = document.createElement("li");
+    this.el.tabIndex = 0;
+    this.el.dataset.sonnerToast = "";
+    this.el.dataset.type = init.type;
+    this.el.dataset.state = "mounting";
+    this.el.dataset.visible = "true";
+    this.el.dataset.index = "0";
+    this.el.dataset.swipe = "idle";
+    this.el.dataset.dismissible = String(init.dismissible);
+    this.el.dataset.expanded = String(init.expand);
+    this.el.dataset.richColors = String(init.richColors);
+    this.el.dataset.promise = String(!!init.promise);
+    this.el.dataset.invert = String(!!init.invert);
+
+    if (init.closeButton && init.type !== "loading") {
+      this.#addCloseButton();
+    }
+
+    this.#addIcon(init.type);
+
+    if (init.html) {
+      this.#addContent(init.html);
+    } else {
+      this.#addTitle(init.title);
+      if (init.description) this.#addDescription(init.description);
+    }
+
+    if (init.cancel?.label || init.action?.label) {
+      this.#addButtons(init.cancel, init.action);
+    }
+
     this.#attachSwipeHandlers();
   }
 
   get isRemoving(): boolean {
-    return this.el.getAttribute("data-state") === "removing";
-  }
-
-  toPublic(): Toast {
-    return {
-      id: this.id,
-      type: this.type,
-      title: this.title,
-      description: this.description,
-      html: this.html,
-      duration: this.duration,
-      dismissible: this.dismissible,
-      promise: this.#promise,
-      action: this.#action,
-      cancel: this.#cancel,
-    };
+    return this.el.dataset.state === "removing";
   }
 
   mount(): void {
-    this.el.setAttribute("data-state", "mounted");
+    this.el.dataset.state = "mounted";
   }
 
   measureHeight(): number {
@@ -178,15 +212,15 @@ export class SonnerToast {
   }
 
   dismiss(): void {
-    this.#onDismiss?.(this.toPublic());
+    this.#onDismiss?.(this);
     this.#onRemove(this.id);
   }
 
   updateLayout(index: number, offset: number, visible: boolean, expanded: boolean, totalInGroup: number): void {
     const el = this.el;
-    el.setAttribute("data-visible", String(visible));
-    el.setAttribute("data-expanded", String(expanded));
-    el.setAttribute("data-index", String(index));
+    el.dataset.visible = String(visible);
+    el.dataset.expanded = String(expanded);
+    el.dataset.index = String(index);
     el.style.setProperty("--index", String(index));
     el.style.setProperty("--toasts-before", String(index));
     el.style.setProperty("--z-index", String(totalInGroup - index));
@@ -203,7 +237,7 @@ export class SonnerToast {
     if (this.#timeout) clearTimeout(this.#timeout);
     this.#closeTimerStart = Date.now();
     this.#timeout = setTimeout(() => {
-      this.#onAutoClose?.(this.toPublic());
+      this.#onAutoClose?.(this);
       this.#onRemove(this.id);
     }, this.#remainingTime);
   }
@@ -230,7 +264,7 @@ export class SonnerToast {
 
   beginRemoval(offset: number): void {
     this.offsetBeforeRemove = offset;
-    this.el.setAttribute("data-state", "removing");
+    this.el.dataset.state = "removing";
     this.el.style.setProperty("--offset", `${offset}px`);
     this.clearTimer();
   }
@@ -251,51 +285,49 @@ export class SonnerToast {
       this.#remainingTime = data.duration;
     }
 
-    const el = this.el;
-    if (this.type) el.setAttribute("data-type", this.type);
+    if (this.type) this.el.dataset.type = this.type;
     if (data.promise !== undefined) {
-      this.#promise = data.promise || null;
-      el.setAttribute("data-promise", String(!!data.promise));
+      this.promise = data.promise || null;
+      this.el.dataset.promise = String(!!data.promise);
     }
 
-    const iconEl = el.querySelector("[data-slot='icon']");
-    if (iconEl) {
-      iconEl.innerHTML =
-        this.type === "loading" ? LOADER_HTML : (ICONS[this.type] || "");
+    if (this.#iconEl) {
+      if (this.type === "loading") {
+        this.#iconEl.replaceChildren(createSvgLoader());
+      } else {
+        this.#iconEl.innerHTML = ICONS[this.type] || "";
+      }
     }
 
     if (data.html !== undefined) {
-      const contentEl = el.querySelector("[data-slot='content']");
-      if (contentEl) {
-        contentEl.innerHTML = data.html;
+      if (this.#contentEl) {
+        this.#contentEl.innerHTML = data.html;
       } else {
-        el.querySelector("[data-slot='title']")?.remove();
-        el.querySelector("[data-slot='description']")?.remove();
-        const newContent = document.createElement("div");
-        newContent.setAttribute("data-slot", "content");
-        newContent.innerHTML = data.html;
-        const icon = el.querySelector("[data-slot='icon']");
-        if (icon) {
-          icon.after(newContent);
+        this.#titleEl?.remove();
+        this.#titleEl = null;
+        this.#descEl?.remove();
+        this.#descEl = null;
+        const div = document.createElement("div");
+        div.dataset.slot = "content";
+        div.innerHTML = data.html;
+        this.#contentEl = div;
+        if (this.#iconEl) {
+          this.#iconEl.after(div);
         } else {
-          el.prepend(newContent);
+          this.el.prepend(div);
         }
       }
     } else {
-      const titleEl = el.querySelector("[data-slot='title']");
-      if (titleEl) titleEl.textContent = this.title;
+      if (this.#titleEl) this.#titleEl.textContent = this.title;
 
-      const descEl = el.querySelector("[data-slot='description']");
-      if (this.description && !descEl) {
-        const titleEl2 = el.querySelector("[data-slot='title']");
-        if (titleEl2) {
-          const newDesc = document.createElement("div");
-          newDesc.setAttribute("data-slot", "description");
-          newDesc.textContent = this.description;
-          titleEl2.after(newDesc);
-        }
-      } else if (descEl) {
-        descEl.textContent = this.description || "";
+      if (this.description && !this.#descEl && this.#titleEl) {
+        const div = document.createElement("div");
+        div.dataset.slot = "description";
+        div.textContent = this.description;
+        this.#descEl = div;
+        this.#titleEl.after(div);
+      } else if (this.#descEl) {
+        this.#descEl.textContent = this.description || "";
       }
     }
 
@@ -310,86 +342,79 @@ export class SonnerToast {
     }
   }
 
-  #buildElement(init: SonnerToastInit): HTMLLIElement {
-    const el = document.createElement("li");
-    el.setAttribute("tabindex", "0");
-    el.setAttribute("data-sonner-toast", "");
-    el.setAttribute("data-type", init.type);
-    el.setAttribute("data-state", "mounting");
-    el.setAttribute("data-visible", "true");
-    el.setAttribute("data-index", "0");
-    el.setAttribute("data-swipe", "idle");
-    el.setAttribute("data-dismissible", String(init.dismissible));
-    el.setAttribute("data-expanded", String(init.expand));
-    el.setAttribute("data-rich-colors", String(init.richColors));
-    el.setAttribute("data-promise", String(!!init.promise));
-    el.setAttribute("data-invert", String(!!init.invert));
-
-    let markup = "";
-
-    if (init.closeButton && init.type !== "loading") {
-      markup += `<button aria-label="Close toast" data-slot="close">${CLOSE_ICON}</button>`;
-    }
-
-    const iconHtml =
-      init.type === "loading" ? LOADER_HTML : (ICONS[init.type] || "");
-    if (iconHtml) markup += `<div data-slot="icon">${iconHtml}</div>`;
-
-    if (init.html) {
-      markup += '<div data-slot="content"></div>';
-    } else {
-      markup += '<div data-slot="title"></div>';
-      if (init.description) markup += '<div data-slot="description"></div>';
-    }
-
-    if (init.cancel?.label || init.action?.label) {
-      markup += '<div data-slot="buttons">';
-      if (init.cancel?.label)
-        markup += `<button data-button="cancel">${escapeHtml(init.cancel.label)}</button>`;
-      if (init.action?.label)
-        markup += `<button data-button="action">${escapeHtml(init.action.label)}</button>`;
-      markup += '</div>';
-    }
-
-    el.innerHTML = markup;
-
-    if (init.html) {
-      const contentEl = el.querySelector("[data-slot='content']");
-      if (contentEl) contentEl.innerHTML = init.html;
-    } else {
-      const titleEl = el.querySelector("[data-slot='title']");
-      if (titleEl) titleEl.textContent = init.title;
-
-      const descEl = el.querySelector("[data-slot='description']");
-      if (descEl) descEl.textContent = init.description;
-    }
-
-    return el;
+  #addCloseButton(): void {
+    const btn = document.createElement("button");
+    btn.ariaLabel = "Close toast";
+    btn.dataset.slot = "close";
+    btn.innerHTML = CLOSE_ICON;
+    btn.addEventListener("click", () => {
+      if (this.dismissible) this.dismiss();
+    });
+    this.el.appendChild(btn);
   }
 
-  #attachEventHandlers(init: SonnerToastInit): void {
-    if (init.closeButton) {
-      this.el.querySelector("[data-slot='close']")?.addEventListener("click", () => {
-        if (this.dismissible) {
-          this.dismiss();
-        }
-      });
+  #addIcon(type: ToastType): void {
+    if (type !== "loading" && !ICONS[type]) return;
+    const div = document.createElement("div");
+    div.dataset.slot = "icon";
+    if (type === "loading") {
+      div.appendChild(createSvgLoader());
+    } else {
+      div.innerHTML = ICONS[type];
     }
-    if (init.cancel?.onClick) {
-      const cancel = init.cancel;
-      this.el.querySelector("[data-button='cancel']")?.addEventListener("click", (e) => {
+    this.#iconEl = div;
+    this.el.appendChild(div);
+  }
+
+  #addTitle(text: string): void {
+    const div = document.createElement("div");
+    div.dataset.slot = "title";
+    div.textContent = text;
+    this.#titleEl = div;
+    this.el.appendChild(div);
+  }
+
+  #addDescription(text: string): void {
+    const div = document.createElement("div");
+    div.dataset.slot = "description";
+    div.textContent = text;
+    this.#descEl = div;
+    this.el.appendChild(div);
+  }
+
+  #addContent(html: string): void {
+    const div = document.createElement("div");
+    div.dataset.slot = "content";
+    div.innerHTML = html;
+    this.#contentEl = div;
+    this.el.appendChild(div);
+  }
+
+  #addButtons(cancel: ToastAction | null, action: ToastAction | null): void {
+    const container = document.createElement("div");
+    container.dataset.slot = "buttons";
+    if (cancel?.label) {
+      const btn = document.createElement("button");
+      btn.dataset.button = "cancel";
+      btn.textContent = cancel.label;
+      btn.addEventListener("click", (e) => {
         if (!this.dismissible) return;
         cancel.onClick(e as MouseEvent);
         this.#onRemove(this.id);
       });
+      container.appendChild(btn);
     }
-    if (init.action?.onClick) {
-      const action = init.action;
-      this.el.querySelector("[data-button='action']")?.addEventListener("click", (e) => {
+    if (action?.label) {
+      const btn = document.createElement("button");
+      btn.dataset.button = "action";
+      btn.textContent = action.label;
+      btn.addEventListener("click", (e) => {
         action.onClick(e as MouseEvent);
         if (!e.defaultPrevented) this.#onRemove(this.id);
       });
+      container.appendChild(btn);
     }
+    this.el.appendChild(container);
   }
 
   #attachSwipeHandlers(): void {
@@ -408,7 +433,7 @@ export class SonnerToast {
       const target = e.target as HTMLElement;
       target.setPointerCapture(e.pointerId);
       if (target.tagName === "BUTTON") return;
-      el.setAttribute("data-swipe", "active");
+      el.dataset.swipe = "active";
       swipe.startX = e.clientX;
       swipe.startY = e.clientY;
     });
@@ -488,21 +513,21 @@ export class SonnerToast {
             : amtY > 0
               ? "down"
               : "up";
-        el.setAttribute("data-swipe", "committed");
-        el.setAttribute("data-swipe-direction", outDirection);
+        el.dataset.swipe = "committed";
+        el.dataset.swipeDirection = outDirection;
         this.dismiss();
         return;
       }
 
       el.style.setProperty("--swipe-amount-x", "0px");
       el.style.setProperty("--swipe-amount-y", "0px");
-      el.setAttribute("data-swipe", "idle");
+      el.dataset.swipe = "idle";
       swipe.direction = null;
       swipe.startTime = null;
     });
 
     el.addEventListener("dragend", () => {
-      el.setAttribute("data-swipe", "idle");
+      el.dataset.swipe = "idle";
       swipe.direction = null;
       swipe.startTime = null;
     });

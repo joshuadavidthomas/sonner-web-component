@@ -674,6 +674,17 @@
   }
 }
 
+.sonner-svg-spinner {
+  animation: sonner-svg-spin 0.8s steps(12) infinite;
+  color: var(--gray11);
+}
+
+@keyframes sonner-svg-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (prefers-reduced-motion) {
   [data-sonner-toast],
   [data-sonner-toast] > *,
