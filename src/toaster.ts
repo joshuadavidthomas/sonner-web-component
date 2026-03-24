@@ -824,5 +824,3 @@ export class SonnerToaster {
     }
   }
 }
-
-export type { Toast, ToastOptions, ToastData, ToastAction, ToastType, Position, SwipeDirection };
