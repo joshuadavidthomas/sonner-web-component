@@ -65,19 +65,19 @@ class SonnerToasterElement extends HTMLElement {
     const sectionEl = document.createElement("section");
     this.shadowRoot!.appendChild(sectionEl);
 
-    const manager = new SonnerToaster(sectionEl);
-    this.#toaster = manager;
+    const toaster = new SonnerToaster(sectionEl);
+    this.#toaster = toaster;
 
-    manager.initConfig(
+    toaster.initConfig(
       SonnerToasterElement.observedAttributes,
       (name) => this.getAttribute(name),
     );
-    manager.setupInitialState();
+    toaster.setupInitialState();
 
-    const hotkeyLabel = manager.getHotkeyLabel();
+    const hotkeyLabel = toaster.getHotkeyLabel();
     sectionEl.setAttribute(
       "aria-label",
-      `${manager.config.containerAriaLabel} ${hotkeyLabel}`,
+      `${toaster.config.containerAriaLabel} ${hotkeyLabel}`,
     );
     sectionEl.setAttribute("tabindex", "-1");
     sectionEl.setAttribute("aria-live", "polite");
@@ -89,21 +89,21 @@ class SonnerToasterElement extends HTMLElement {
 
     document.addEventListener(
       "visibilitychange",
-      () => manager.handleVisibilityChange(document.hidden),
+      () => toaster.handleVisibilityChange(document.hidden),
       { signal },
     );
 
     document.addEventListener(
       "keydown",
-      (e) => manager.handleKeydown(e, this.shadowRoot!.activeElement),
+      (e) => toaster.handleKeydown(e, this.shadowRoot!.activeElement),
       { signal },
     );
 
-    if (manager.usesSystemTheme && window.matchMedia) {
+    if (toaster.usesSystemTheme && window.matchMedia) {
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
       mq.addEventListener(
         "change",
-        (e) => manager.handleThemeChange(e.matches),
+        (e) => toaster.handleThemeChange(e.matches),
         { signal },
       );
     }
@@ -141,7 +141,7 @@ class SonnerToasterElement extends HTMLElement {
     }
 
     // Consume <sonner-toast> children after the page settles visually.
-    const delay = manager.config.flushDelay;
+    const delay = toaster.config.flushDelay;
     window.addEventListener(
       "load",
       () => setTimeout(() => this.#flushChildMessages(), delay),
@@ -165,7 +165,7 @@ class SonnerToasterElement extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {
     if (oldValue === newValue) return;
 
-    // "window" attribute is handled by the element, not the manager
+    // "window" attribute is handled by the element, not the toaster
     if (name === "window") {
       if (newValue === "false") {
         if (window.toast === (toast as unknown)) delete (window as Partial<Window>).toast;
