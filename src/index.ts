@@ -47,7 +47,7 @@ class SonnerToasterElement extends HTMLElement {
     "window",
   ];
 
-  #manager: SonnerToaster | null = null;
+  #toaster: SonnerToaster | null = null;
   #abortController: AbortController | null = null;
   #connected: boolean = false;
 
@@ -66,7 +66,7 @@ class SonnerToasterElement extends HTMLElement {
     this.shadowRoot!.appendChild(sectionEl);
 
     const manager = new SonnerToaster(sectionEl);
-    this.#manager = manager;
+    this.#toaster = manager;
 
     manager.initConfig(
       SonnerToasterElement.observedAttributes,
@@ -151,8 +151,8 @@ class SonnerToasterElement extends HTMLElement {
 
   disconnectedCallback() {
     this.#connected = false;
-    this.#manager?.destroy();
-    this.#manager = null;
+    this.#toaster?.destroy();
+    this.#toaster = null;
     if (this.#abortController) {
       this.#abortController.abort();
       this.#abortController = null;
@@ -175,22 +175,22 @@ class SonnerToasterElement extends HTMLElement {
       return;
     }
 
-    if (!this.#manager) return;
-    this.#manager.applyAttribute(name, newValue);
+    if (!this.#toaster) return;
+    this.#toaster.applyAttribute(name, newValue);
     if (this.#connected) {
-      this.#manager.handleAttributeChange();
+      this.#toaster.handleAttributeChange();
     }
   }
 
   static instance: SonnerToasterElement | null = null;
 
   reset(): void {
-    this.#manager?.reset();
+    this.#toaster?.reset();
   }
 
   configure(opts: ConfigureOptions): void {
-    if (!opts || !this.#manager) return;
-    this.#manager.configure(opts);
+    if (!opts || !this.#toaster) return;
+    this.#toaster.configure(opts);
     // Reflect config back to attributes
     if (opts.position !== undefined) this.setAttribute("position", opts.position);
     if (opts.theme !== undefined) this.setAttribute("theme", opts.theme);
@@ -204,25 +204,25 @@ class SonnerToasterElement extends HTMLElement {
   }
 
   getToasts(): Toast[] {
-    return this.#manager?.getToasts() ?? [];
+    return this.#toaster?.getToasts() ?? [];
   }
 
   add(level: string, message: string | ToastOptions, options?: ToastOptions): number {
-    return this.#manager!.add(level as Parameters<SonnerToaster["add"]>[0], message, options);
+    return this.#toaster!.add(level as Parameters<SonnerToaster["add"]>[0], message, options);
   }
 
   dismiss(id?: number | null): number | undefined | null {
-    return this.#manager!.dismiss(id);
+    return this.#toaster!.dismiss(id);
   }
 
   promise<T>(promise: Promise<T> | (() => Promise<T>), data: PromiseData<T>): number | undefined {
-    return this.#manager!.promise(promise, data);
+    return this.#toaster!.promise(promise, data);
   }
 
   #flushChildMessages(): void {
     const children = this.querySelectorAll("sonner-toast");
     if (children.length === 0) return;
-    this.#manager?.flushChildToasts(
+    this.#toaster?.flushChildToasts(
       children,
       (level, message, opts) => this.add(level, message, opts),
     );
