@@ -288,9 +288,9 @@ export class SonnerToaster {
     root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
 
-    Array.from(root.host.attributes).forEach(({ name, value }) =>
-      this.applyAttribute(name, value),
-    );
+    for (const { name, value } of root.host.attributes) {
+      this.applyAttribute(name, value);
+    }
 
     this.applyAttribute("container-aria-label", null);
     this.#resolveTheme();
