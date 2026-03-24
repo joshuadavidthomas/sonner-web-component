@@ -14,7 +14,7 @@
  */
 
 import type { Toast, ToastOptions, PromiseData, ConfigureOptions, ToastFunction } from "./toaster.js";
-import { SonnerToaster, LEVELS } from "./toaster.js";
+import { SonnerToaster, OBSERVED_ATTRIBUTES, LEVELS } from "./toaster.js";
 import STYLES from "./styles.css" with { type: "text" };
 
 // created once and shared across all instances via `adoptedStyleSheets`
@@ -27,25 +27,7 @@ function getSheet(): CSSStyleSheet {
   return sharedSheet;
 }
 class SonnerToasterElement extends HTMLElement {
-  static observedAttributes = [
-    "position",
-    "theme",
-    "rich-colors",
-    "expand",
-    "close-button",
-    "invert",
-    "duration",
-    "gap",
-    "visible-toasts",
-    "offset",
-    "mobile-offset",
-    "dir",
-    "container-aria-label",
-    "flush-delay",
-    "burst-window",
-    "burst-linger",
-    "window",
-  ];
+  static observedAttributes = [...OBSERVED_ATTRIBUTES, "window"];
 
   #toaster: SonnerToaster | null = null;
   #abortController: AbortController | null = null;
@@ -64,7 +46,6 @@ class SonnerToasterElement extends HTMLElement {
 
     this.#toaster = new SonnerToaster(
       this.shadowRoot!,
-      SonnerToasterElement.observedAttributes,
       (name) => this.getAttribute(name),
     );
 

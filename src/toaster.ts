@@ -270,6 +270,25 @@ function toPublicToast(t: ToastState): Toast {
 
 
 
+export const OBSERVED_ATTRIBUTES = [
+  "position",
+  "theme",
+  "rich-colors",
+  "expand",
+  "close-button",
+  "invert",
+  "duration",
+  "gap",
+  "visible-toasts",
+  "offset",
+  "mobile-offset",
+  "dir",
+  "container-aria-label",
+  "flush-delay",
+  "burst-window",
+  "burst-linger",
+] as const;
+
 export class SonnerToaster {
   #config: ToasterConfig = { ...DEFAULTS };
   #resolvedTheme: "light" | "dark" = "light";
@@ -279,7 +298,7 @@ export class SonnerToaster {
   #idCounter: number = 0;
   #sectionEl: HTMLElement;
 
-  constructor(root: ShadowRoot, observedAttributes: string[], getAttribute: (name: string) => string | null) {
+  constructor(root: ShadowRoot, getAttribute: (name: string) => string | null) {
     const sectionEl = document.createElement("section");
     sectionEl.setAttribute("tabindex", "-1");
     sectionEl.setAttribute("aria-live", "polite");
@@ -288,7 +307,7 @@ export class SonnerToaster {
     root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
 
-    for (const name of observedAttributes) {
+    for (const name of OBSERVED_ATTRIBUTES) {
       const value = getAttribute(name);
       if (value !== null) {
         this.applyAttribute(name, value);
