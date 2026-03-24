@@ -231,14 +231,14 @@ class SonnerToasterElement extends HTMLElement {
 
 // <sonner-toast> is a data carrier consumed by <sonner-toaster>.
 // It never renders anything itself.
-class SonnerToast extends HTMLElement {
+class SonnerToastElement extends HTMLElement {
   connectedCallback() {
     this.style.display = "none";
   }
 }
 
 customElements.define("sonner-toaster", SonnerToasterElement);
-customElements.define("sonner-toast", SonnerToast);
+customElements.define("sonner-toast", SonnerToastElement);
 
 function getDefault(): SonnerToasterElement {
   if (SonnerToasterElement.instance) return SonnerToasterElement.instance;
