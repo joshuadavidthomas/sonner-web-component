@@ -56,51 +56,27 @@ const ICONS: Record<string, string> = {
 const CLOSE_ICON: string =
   '<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
-function createLoader(): HTMLDivElement {
-  const wrapper = document.createElement("div");
-  wrapper.className = "sonner-loading-wrapper";
-  const spinner = document.createElement("div");
-  spinner.className = "sonner-spinner";
-  for (let i = 0; i < 12; i++) {
-    const bar = document.createElement("div");
-    bar.className = "sonner-loading-bar";
-    bar.style.animationDelay = `${-1.2 + i * 0.1}s`;
-    bar.style.transform = `rotate(${i * 30}deg) translate(146%)`;
-    spinner.appendChild(bar);
-  }
-  wrapper.appendChild(spinner);
-  return wrapper;
-}
-
-const SPINNER_BARS = 12;
-const SPINNER_OPACITIES = Array.from({ length: SPINNER_BARS }, (_, i) =>
-  (1 - (i / SPINNER_BARS) * 0.85).toFixed(2),
-);
-
-function createSvgLoader(): HTMLDivElement {
-  const wrapper = document.createElement("div");
-  wrapper.className = "sonner-loading-wrapper";
+function createLoader(spinnerBars: number = 12): SVGSVGElement {
   const ns = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(ns, "svg");
-  svg.setAttribute("viewBox", "0 0 24 24");
-  svg.setAttribute("width", "16");
-  svg.setAttribute("height", "16");
-  svg.classList.add("sonner-svg-spinner");
-  for (let i = 0; i < SPINNER_BARS; i++) {
-    const line = document.createElementNS(ns, "line");
-    line.setAttribute("x1", "12");
-    line.setAttribute("y1", "2");
-    line.setAttribute("x2", "12");
-    line.setAttribute("y2", "6.5");
-    line.setAttribute("stroke", "currentColor");
-    line.setAttribute("stroke-width", "2");
-    line.setAttribute("stroke-linecap", "round");
-    line.setAttribute("opacity", SPINNER_OPACITIES[i]);
-    line.setAttribute("transform", `rotate(${i * 30} 12 12)`);
-    svg.appendChild(line);
+  svg.setAttribute("viewBox", "0 0 64 64");
+  svg.setAttribute("width", "20");
+  svg.setAttribute("height", "20");
+  svg.classList.add("sonner-spinner");
+  for (let i = 0; i < spinnerBars; i++) {
+    const rect = document.createElementNS(ns, "rect");
+    rect.setAttribute("x", "31");
+    rect.setAttribute("y", "8");
+    rect.setAttribute("width", "2");
+    rect.setAttribute("height", "14");
+    rect.setAttribute("rx", "2");
+    rect.setAttribute("fill", "currentColor");
+    rect.style.animation = "sonner-spin 1.2s linear infinite";
+    rect.style.animationDelay = `${-1.2 + i * 0.1}s`;
+    rect.setAttribute("transform", `rotate(${i * 30} 32 32)`);
+    svg.appendChild(rect);
   }
-  wrapper.appendChild(svg);
-  return wrapper;
+  return svg;
 }
 
 export interface SonnerToastInit extends Toast {
@@ -293,7 +269,7 @@ export class SonnerToast implements Toast {
 
     if (this.#iconEl) {
       if (this.type === "loading") {
-        this.#iconEl.replaceChildren(createSvgLoader());
+        this.#iconEl.replaceChildren(createLoader());
       } else {
         this.#iconEl.innerHTML = ICONS[this.type] || "";
       }
@@ -358,7 +334,7 @@ export class SonnerToast implements Toast {
     const div = document.createElement("div");
     div.dataset.slot = "icon";
     if (type === "loading") {
-      div.appendChild(createSvgLoader());
+      div.appendChild(createLoader());
     } else {
       div.innerHTML = ICONS[type];
     }
