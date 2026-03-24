@@ -20,7 +20,8 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ### Changed
 
-- Extracted `ToastManager` class from `SonnerToaster` custom element, separating toast logic from web component lifecycle
+- Extracted `SonnerToaster` logic class from the custom element, separating toast logic from web component lifecycle into `toaster.ts`
+- Renamed the custom element class to `SonnerToasterElement` (`index.ts`), now a thin shell that delegates to `SonnerToaster`
 - Moved CSS from inline template literal to a standalone `styles.css` file
 
 ## [0.1.2]
