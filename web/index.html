@@ -437,7 +437,6 @@
 
     .code-wrapper {
       position: relative;
-      overflow: hidden;
       margin-top: var(--spacing-4);
       border-radius: var(--radius);
       border: 1px solid var(--gray3);
@@ -449,7 +448,8 @@
       background: linear-gradient(to top, var(--gray2), var(--gray1) var(--spacing-4));
       font-family: var(--font-mono);
       font-size: var(--text-xs);
-      white-space: pre-wrap;
+      white-space: pre;
+      overflow-x: auto;
       color: var(--gray12);
       line-height: 0;
     }
@@ -555,8 +555,8 @@
 
     .theme-toggle {
       position: fixed;
-      bottom: var(--spacing-4);
-      left: var(--spacing-4);
+      top: var(--spacing-4);
+      right: var(--spacing-4);
       z-index: 100;
       background: var(--gray1);
       color: var(--gray11);
@@ -965,7 +965,8 @@ toast.dismiss()</code></pre>
           <h3>htmx</h3>
           <p class="bridge-desc">Trigger toasts from <code>HX-Trigger</code> response headers.</p>
           <div class="code-wrapper">
-            <pre><code>&lt;script type="module"
+            <pre><code>&lt;script
+  type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component/dist/bridges/htmx.js"&gt;
 &lt;/script&gt;
 
@@ -983,7 +984,8 @@ toast.dismiss()</code></pre>
           <h3>Alpine.js</h3>
           <p class="bridge-desc">Use <code>$toast</code> magic in Alpine expressions.</p>
           <div class="code-wrapper">
-            <pre><code>&lt;script type="module"
+            <pre><code>&lt;script
+  type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component/dist/bridges/alpine.js"&gt;
 &lt;/script&gt;
 
@@ -1001,7 +1003,8 @@ toast.dismiss()</code></pre>
           <h3>fetch</h3>
           <p class="bridge-desc">Automatically reads <code>X-Toasts</code> header from fetch responses.</p>
           <div class="code-wrapper">
-            <pre><code>&lt;script type="module"
+            <pre><code>&lt;script
+  type="module"
   src="https://cdn.jsdelivr.net/npm/sonner-web-component/dist/bridges/fetch.js"&gt;
 &lt;/script&gt;
 
