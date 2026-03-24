@@ -21,7 +21,7 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/joshuadavidthomas/sonner-web-component",
+  "homepage": "https://sonner-web-component.joshthomas.dev",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
