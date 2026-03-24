@@ -475,8 +475,16 @@ const STYLES = `
   grid-column: 1 / 3;
 }
 
-[data-sonner-toast] [data-button] {
+[data-sonner-toast] [data-slot='buttons'] {
   grid-column: 3;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--toast-button-margin-start);
+  margin-right: var(--toast-button-margin-end);
+}
+
+[data-sonner-toast] [data-button] {
   border-radius: 4px;
   padding-left: 8px;
   padding-right: 8px;
@@ -484,8 +492,6 @@ const STYLES = `
   font-size: 12px;
   color: var(--normal-bg);
   background: var(--normal-text);
-  margin-left: var(--toast-button-margin-start);
-  margin-right: var(--toast-button-margin-end);
   border: none;
   font-weight: 500;
   cursor: pointer;
@@ -498,11 +504,6 @@ const STYLES = `
 
 [data-sonner-toast] [data-button]:focus-visible {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
-}
-
-[data-sonner-toast] [data-button]:first-of-type {
-  margin-left: var(--toast-button-margin-start);
-  margin-right: var(--toast-button-margin-end);
 }
 
 [data-sonner-toast] [data-button='cancel'] {
@@ -1797,10 +1798,14 @@ class SonnerToaster extends HTMLElement {
       if (description) markup += '<div data-slot="description"></div>';
     }
 
-    if (cancel?.label)
-      markup += `<button data-button="cancel">${escapeHtml(cancel.label)}</button>`;
-    if (action?.label)
-      markup += `<button data-button="action">${escapeHtml(action.label)}</button>`;
+    if (cancel?.label || action?.label) {
+      markup += '<div data-slot="buttons">';
+      if (cancel?.label)
+        markup += `<button data-button="cancel">${escapeHtml(cancel.label)}</button>`;
+      if (action?.label)
+        markup += `<button data-button="action">${escapeHtml(action.label)}</button>`;
+      markup += '</div>';
+    }
 
     el.innerHTML = markup;
 
