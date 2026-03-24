@@ -31,7 +31,6 @@ class SonnerToasterElement extends HTMLElement {
 
   #toaster: SonnerToaster | null = null;
   #abortController: AbortController | null = null;
-  #connected: boolean = false;
 
   constructor() {
     super();
@@ -39,8 +38,7 @@ class SonnerToasterElement extends HTMLElement {
   }
 
   connectedCallback() {
-    if (this.#connected) return;
-    this.#connected = true;
+    if (this.#toaster) return;
 
     this.shadowRoot!.adoptedStyleSheets = [getSheet()];
 
@@ -112,7 +110,6 @@ class SonnerToasterElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.#connected = false;
     this.#toaster?.destroy();
     this.#toaster = null;
     if (this.#abortController) {
@@ -139,9 +136,7 @@ class SonnerToasterElement extends HTMLElement {
 
     if (!this.#toaster) return;
     this.#toaster.applyAttribute(name, newValue);
-    if (this.#connected) {
-      this.#toaster.handleAttributeChange();
-    }
+    this.#toaster.handleAttributeChange();
   }
 
   static instance: SonnerToasterElement | null = null;
