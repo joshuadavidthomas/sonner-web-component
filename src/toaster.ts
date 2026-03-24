@@ -279,7 +279,7 @@ export class SonnerToaster {
   #idCounter: number = 0;
   #sectionEl: HTMLElement;
 
-  constructor(parentEl: HTMLElement | ShadowRoot) {
+  constructor(root: ShadowRoot) {
     const sectionEl = document.createElement("section");
     const hotkeyLabel = this.#hotkeyLabel();
     sectionEl.setAttribute(
@@ -290,7 +290,7 @@ export class SonnerToaster {
     sectionEl.setAttribute("aria-live", "polite");
     sectionEl.setAttribute("aria-relevant", "additions text");
     sectionEl.setAttribute("aria-atomic", "false");
-    parentEl.appendChild(sectionEl);
+    root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
   }
 
