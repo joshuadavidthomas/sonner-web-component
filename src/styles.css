@@ -580,7 +580,7 @@
 }
 
 .sonner-spinner {
-  color: var(--gray12);
+  color: var(--normal-text);
 }
 
 @keyframes sonner-fade-in {
