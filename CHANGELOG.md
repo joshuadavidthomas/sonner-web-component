@@ -18,6 +18,10 @@ and this project attempts to adhere to [Semantic Versioning](https://semver.org/
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed loader spinner being invisible in dark mode by using theme-aware text color instead of hardcoded dark color
+
 ## [0.1.3]
 
 ### Changed
