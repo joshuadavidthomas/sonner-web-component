@@ -281,17 +281,13 @@ export class SonnerToaster {
 
   constructor(root: ShadowRoot) {
     const sectionEl = document.createElement("section");
-    const hotkeyLabel = this.#hotkeyLabel();
-    sectionEl.setAttribute(
-      "aria-label",
-      `${this.#config.containerAriaLabel} ${hotkeyLabel}`,
-    );
     sectionEl.setAttribute("tabindex", "-1");
     sectionEl.setAttribute("aria-live", "polite");
     sectionEl.setAttribute("aria-relevant", "additions text");
     sectionEl.setAttribute("aria-atomic", "false");
     root.appendChild(sectionEl);
     this.#sectionEl = sectionEl;
+    this.#updateAriaLabel();
   }
 
   get config(): ToasterConfig {
@@ -446,13 +442,7 @@ export class SonnerToaster {
         break;
       case "container-aria-label":
         this.#config.containerAriaLabel = value || DEFAULTS.containerAriaLabel;
-        if (this.#sectionEl) {
-          const hotkeyLabel = this.#hotkeyLabel();
-          this.#sectionEl.setAttribute(
-            "aria-label",
-            `${this.#config.containerAriaLabel} ${hotkeyLabel}`,
-          );
-        }
+        this.#updateAriaLabel();
         break;
       case "flush-delay": {
         const n = Number(value);
@@ -653,11 +643,15 @@ export class SonnerToaster {
     }
   }
 
-  #hotkeyLabel(): string {
-    return this.#config.hotkey
+  #updateAriaLabel(): void {
+    const hotkeyLabel = this.#config.hotkey
       .join("+")
       .replace(/Key/g, "")
       .replace(/Digit/g, "");
+    this.#sectionEl.setAttribute(
+      "aria-label",
+      `${this.#config.containerAriaLabel} ${hotkeyLabel}`,
+    );
   }
 
   #getDocumentDirection(): string {
