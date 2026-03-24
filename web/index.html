@@ -474,12 +474,15 @@
 
     .copy-btn {
       position: absolute;
-      top: var(--spacing-2);
+      inset-block: 0;
       right: var(--spacing-4);
       z-index: 1;
       background: var(--gray0);
       opacity: 1;
       cursor: copy;
+      height: fit-content;
+      margin-top: var(--spacing-2);
+      margin-bottom: auto;
     }
 
     @media (width >= 40rem) {
