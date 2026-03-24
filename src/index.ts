@@ -44,10 +44,7 @@ class SonnerToasterElement extends HTMLElement {
 
     this.shadowRoot!.adoptedStyleSheets = [getSheet()];
 
-    this.#toaster = new SonnerToaster(
-      this.shadowRoot!,
-      (name) => this.getAttribute(name),
-    );
+    this.#toaster = new SonnerToaster(this.shadowRoot!);
 
     this.#abortController = new AbortController();
     const { signal } = this.#abortController;

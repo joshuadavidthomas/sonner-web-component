@@ -298,7 +298,7 @@ export class SonnerToaster {
   #idCounter: number = 0;
   #sectionEl: HTMLElement;
 
-  constructor(root: ShadowRoot, getAttribute: (name: string) => string | null) {
+  constructor(root: ShadowRoot) {
     const sectionEl = document.createElement("section");
     sectionEl.setAttribute("tabindex", "-1");
     sectionEl.setAttribute("aria-live", "polite");
@@ -308,7 +308,7 @@ export class SonnerToaster {
     this.#sectionEl = sectionEl;
 
     for (const name of OBSERVED_ATTRIBUTES) {
-      const value = getAttribute(name);
+      const value = root.host.getAttribute(name);
       if (value !== null) {
         this.applyAttribute(name, value);
       }
