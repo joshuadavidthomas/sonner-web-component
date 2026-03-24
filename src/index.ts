@@ -134,9 +134,7 @@ class SonnerToasterElement extends HTMLElement {
       return;
     }
 
-    if (!this.#toaster) return;
-    this.#toaster.applyAttribute(name, newValue);
-    this.#toaster.handleAttributeChange();
+    this.#toaster?.applyAttribute(name, newValue);
   }
 
   static instance: SonnerToasterElement | null = null;

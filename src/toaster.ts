@@ -495,9 +495,7 @@ export class SonnerToaster {
         break;
       }
     }
-  }
 
-  handleAttributeChange(): void {
     if (this.#groups.size === 0) return;
     this.#resolveTheme();
     const dir = this.#config.dir === "auto"
