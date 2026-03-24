@@ -14,7 +14,7 @@
  */
 
 import type { Toast, ToastOptions, PromiseData, ConfigureOptions, ToastFunction } from "./manager.js";
-import { ToastManager, LEVELS } from "./manager.js";
+import { SonnerToaster, LEVELS } from "./manager.js";
 import STYLES from "./styles.css" with { type: "text" };
 
 // created once and shared across all instances via `adoptedStyleSheets`
@@ -26,7 +26,7 @@ function getSheet(): CSSStyleSheet {
   sharedSheet.replaceSync(STYLES);
   return sharedSheet;
 }
-class SonnerToaster extends HTMLElement {
+class SonnerToasterElement extends HTMLElement {
   static observedAttributes = [
     "position",
     "theme",
@@ -47,7 +47,7 @@ class SonnerToaster extends HTMLElement {
     "window",
   ];
 
-  #manager: ToastManager | null = null;
+  #manager: SonnerToaster | null = null;
   #abortController: AbortController | null = null;
   #connected: boolean = false;
 
@@ -65,11 +65,11 @@ class SonnerToaster extends HTMLElement {
     const sectionEl = document.createElement("section");
     this.shadowRoot!.appendChild(sectionEl);
 
-    const manager = new ToastManager(sectionEl);
+    const manager = new SonnerToaster(sectionEl);
     this.#manager = manager;
 
     manager.initConfig(
-      SonnerToaster.observedAttributes,
+      SonnerToasterElement.observedAttributes,
       (name) => this.getAttribute(name),
     );
     manager.setupInitialState();
@@ -132,8 +132,8 @@ class SonnerToaster extends HTMLElement {
       { signal },
     );
 
-    if (!SonnerToaster.instance) {
-      SonnerToaster.instance = this;
+    if (!SonnerToasterElement.instance) {
+      SonnerToasterElement.instance = this;
     }
 
     if (this.getAttribute("window") !== "false") {
@@ -157,8 +157,8 @@ class SonnerToaster extends HTMLElement {
       this.#abortController.abort();
       this.#abortController = null;
     }
-    if (SonnerToaster.instance === this) {
-      SonnerToaster.instance = null;
+    if (SonnerToasterElement.instance === this) {
+      SonnerToasterElement.instance = null;
     }
   }
 
@@ -182,7 +182,7 @@ class SonnerToaster extends HTMLElement {
     }
   }
 
-  static instance: SonnerToaster | null = null;
+  static instance: SonnerToasterElement | null = null;
 
   reset(): void {
     this.#manager?.reset();
@@ -208,7 +208,7 @@ class SonnerToaster extends HTMLElement {
   }
 
   add(level: string, message: string | ToastOptions, options?: ToastOptions): number {
-    return this.#manager!.add(level as Parameters<ToastManager["add"]>[0], message, options);
+    return this.#manager!.add(level as Parameters<SonnerToaster["add"]>[0], message, options);
   }
 
   dismiss(id?: number | null): number | undefined | null {
@@ -237,14 +237,14 @@ class SonnerToast extends HTMLElement {
   }
 }
 
-customElements.define("sonner-toaster", SonnerToaster);
+customElements.define("sonner-toaster", SonnerToasterElement);
 customElements.define("sonner-toast", SonnerToast);
 
-function getDefault(): SonnerToaster {
-  if (SonnerToaster.instance) return SonnerToaster.instance;
+function getDefault(): SonnerToasterElement {
+  if (SonnerToasterElement.instance) return SonnerToasterElement.instance;
   const el = document.createElement("sonner-toaster");
   document.body.appendChild(el);
-  return SonnerToaster.instance!;
+  return SonnerToasterElement.instance!;
 }
 
 function toast(msg: string | ToastOptions, data?: ToastOptions): number {
@@ -261,7 +261,7 @@ toast.dismiss = (id?: number): number | undefined | null => getDefault().dismiss
 toast.configure = (opts: ConfigureOptions): void => getDefault().configure(opts);
 toast.reset = (): void => getDefault().reset();
 toast.destroy = (): void => {
-  const el = SonnerToaster.instance;
+  const el = SonnerToasterElement.instance;
   if (el?.parentNode) el.parentNode.removeChild(el);
 };
 toast.getToasts = (): Toast[] => getDefault().getToasts();

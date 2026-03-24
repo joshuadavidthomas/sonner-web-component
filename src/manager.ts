@@ -270,7 +270,7 @@ function toPublicToast(t: ToastState): Toast {
 
 
 
-export class ToastManager {
+export class SonnerToaster {
   #config: ToasterConfig = { ...DEFAULTS };
   #resolvedTheme: "light" | "dark" = "light";
   #toasts: ToastState[] = [];
